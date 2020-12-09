@@ -1,4 +1,4 @@
-module shrug
+module github.com/TheYahya/shrug
 
 go 1.13
 

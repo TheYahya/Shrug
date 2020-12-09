@@ -7,9 +7,9 @@ import (
 	"google.golang.org/api/oauth2/v2"
 	"net/http"
 	"os"
-	"shrug/domain/entity"
-	httpResponse "shrug/interfaces/response"
-	"shrug/usecase"
+	"github.com/TheYahya/shrug/domain/entity"
+	httpResponse "github.com/TheYahya/shrug/interfaces/response"
+	"github.com/TheYahya/shrug/usecase"
 	"strconv"
 	"time"
 )

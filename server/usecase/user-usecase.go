@@ -2,8 +2,8 @@ package usecase
 
 import (
 	"github.com/theyahya/random-string"
-	"shrug/domain/entity"
-	"shrug/domain/repository"
+	"github.com/TheYahya/shrug/domain/entity"
+	"github.com/TheYahya/shrug/domain/repository"
 )
 
 type UserUsecase interface {

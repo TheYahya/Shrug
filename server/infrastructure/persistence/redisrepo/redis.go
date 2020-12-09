@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/go-redis/redis/v8"
-	"shrug/domain/repository"
+	"github.com/TheYahya/shrug/domain/repository"
 )
 
 type RedisRepositories struct {

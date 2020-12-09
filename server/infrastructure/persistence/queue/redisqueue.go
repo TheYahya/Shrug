@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/adjust/rmq/v3"
-	"shrug/domain/entity"
-	"shrug/usecase"
+	"github.com/TheYahya/shrug/domain/entity"
+	"github.com/TheYahya/shrug/usecase"
 	"strings"
 	"time"
 )
