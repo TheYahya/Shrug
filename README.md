@@ -1,6 +1,6 @@
 # Shrug
 <p align="center">
-<a href="http://shrug.ir"><img src="./client/public/images/shrug-ir.png" alt="shrug.ir"/></a>
+<a href="http://shrug.ir"><img src="./screenshots/logo.png" alt="shrug.ir"/></a>
 </p>
 
 Shrug is a fast & open source link shortner writen with Golang and React.JS. For demo check [shrug.ir](http://shrug.ir)
