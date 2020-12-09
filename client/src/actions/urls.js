@@ -76,8 +76,7 @@ export const startUpdateUrl = (url = {}) => {
           createdAt: result.data.response.created_at
         }))
       } else {
-        console.log(result.data)
-        // dispatch(setAddUrlError(result.data.message));
+        // TODO: Handle errors
       }
     })
   }

@@ -24,8 +24,6 @@ export default (state = urlsReducerDefaultState, action) => {
         urls
       }
     case 'UPDATE_URL':
-      console.log('reducer')
-      console.log(action.url)
       var urls = state.urls.map(function(url) { return url.id == action.url.id ? action.url: url; })
       return {
         ...state,
