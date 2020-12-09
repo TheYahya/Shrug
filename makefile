@@ -8,6 +8,10 @@ run-server:
 	cd server && \
 	go run main.go
 
+install-client:
+	cd client && \
+	yarn install
+
 run-client: 
 	cd client && \
 	yarn dev-server
