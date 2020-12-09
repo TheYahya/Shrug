@@ -1,0 +1,116 @@
+.url-stats {
+  margin: 5rem auto;
+  max-width: 65rem;
+  .url-overview { 
+  }
+  .tiles {
+    .tile {
+      background-color: white;
+      padding: .5rem .8rem;
+      box-shadow: 0px 3px 4px rgba(0, 0, 0, 0.2);
+      .tile__title {
+        color: grey;
+      }
+      .tile__info {
+        display: flex;
+        align-items: baseline;
+        font-size: 1.4rem;
+        white-space: nowrap;
+        color: $text-color;
+        font-weight: 300;
+        .tile__info__count {
+          font-size: .8rem; 
+          color: grey;
+        }
+      }
+      .tile__change {
+        display: flex;
+        align-items: center;
+      }
+    }
+  }
+  .container {
+    .chart-wrapper { 
+      background: white;
+      box-shadow: 0px 3px 4px rgba(0, 0, 0, 0.2);
+      margin-top: 2rem;
+      .chart__title {
+        border-top-left-radius: .7rem;
+        border-top-right-radius: .7rem;
+        
+        padding: 1rem;
+        display: block;
+        width: 100%;
+        background-color: #f3f3f3;
+      }
+    }
+
+  }
+}
+
+
+/********* Circle Pie ***********/
+$circle-diameter: 45px;
+$circle-border-width: 2px;
+$circle-background-color: #fff;
+$circle-border-color-remaining: #ccc;
+$circle-border-color-elapsed: $text-color;
+
+.pie {
+  width: $circle-diameter;
+  height: $circle-diameter;
+  display: block;
+  border-radius: 50%;
+  background-color: $circle-border-color-elapsed;
+  position: relative;
+  border: none;
+  margin: 0 auto;
+
+  &:after {
+    display: none;
+  }
+
+  // Remove this if you do not need the percentage circle
+  &:after {
+    display: block;
+    position: absolute;
+    top: $circle-border-width;
+    left: $circle-border-width;
+    height: $circle-diameter - 2*$circle-border-width;
+    width:  $circle-diameter - 2*$circle-border-width;
+    line-height:  $circle-diameter - 2*$circle-border-width;
+    background: $circle-background-color;
+    border-radius: 50%;
+    font-size: .8em;
+    text-align: center;
+  }
+
+
+  // loop to rotate first 50 percent
+  @for $j from 0 through 50 {
+    &.p#{$j} {
+      background-image:
+        /* 10% = 126deg = 90 + ( 360 * .1 ) */
+        linear-gradient(90deg+(360*0.01*$j), transparent 50%, $circle-border-color-remaining 50%),
+        linear-gradient(90deg, $circle-border-color-remaining 50%, transparent 50%); // remove highlight at the bottom half of the border/circle
+
+      &:after {
+        content: "#{$j}%";
+      }
+    }
+  }
+  // loop to rotate last 50 percent
+  @for $j from 51 through 100 {
+    &.p#{$j} {
+      background-image:
+        linear-gradient(90deg, transparent 50%, $circle-border-color-elapsed 50%), // highlight the right half of the border/circle
+        /* 90% = 54deg = -90 + (360*0.01*($j - 50) */
+        linear-gradient(-90deg+(360*0.01*($j - 50)), transparent 50%, $circle-border-color-remaining 50%);
+
+      &:after {
+        content: "#{$j}%";
+      }
+    }
+  }
+}
+/********* End Circle Pie ***********/

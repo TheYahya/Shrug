@@ -1,0 +1,34 @@
+.new-link {
+  margin: 10rem auto;
+  max-width: 40rem;
+
+  input {
+    background-color: inherit;
+    border: none;
+    font-size: 3rem;
+    margin-bottom: .5rem;
+
+    &::-webkit-input-placeholder {
+      color: rgba(55, 53, 47, 0.2);;
+    }
+    &:-ms-input-placeholder {
+      color: rgba(55, 53, 47, 0.2);;
+    }
+    &::placeholder {
+      color: rgba(55, 53, 47, 0.2);;
+    }
+
+    &:focus {
+      border: none;
+      background: inherit;
+      outline: none;
+      -webkit-box-shadow: none;
+      box-shadow: none;
+    }
+  }
+
+  #custom-address, #submit {
+    font-size: 1rem;
+    background-color: #f8f8f8;
+  } 
+}

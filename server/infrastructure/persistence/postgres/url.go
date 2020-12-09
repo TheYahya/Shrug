@@ -1,0 +1,90 @@
+package postgresrepo
+
+import (
+	"errors"
+	// "github.com/jinzhu/gorm"
+	"gorm.io/gorm"
+	"shrug/domain/entity"
+	"shrug/domain/repository"
+)
+
+type linkrepo struct {
+	db *gorm.DB
+}
+
+// NewLinkRepository implement urlRepository
+func NewLinkRepository(db *gorm.DB) repository.LinkRepository {
+	return &linkrepo{db}
+}
+
+func (r *linkrepo) Store(link *entity.Link) (*entity.Link, error) {
+	if err := r.db.Create(link).Error; err != nil {
+		return nil, err
+	}
+	if err := r.db.Preload("User").First(&link).Error; err != nil {
+		return nil, err
+	}
+	return link, nil
+}
+
+func (r *linkrepo) FindByShortCode(shortCode string) (*entity.Link, error) {
+	var link entity.Link
+
+	if r.db.Preload("User").First(&link, "short_code = ?", shortCode).Error != nil {
+		return nil, errors.New("failed to found the url")
+	}
+	return &link, nil
+}
+
+func (r *linkrepo) FindByID(id int64) (*entity.Link, error) {
+	var link entity.Link
+
+	if r.db.Preload("User").First(&link, "id = ?", id).Error != nil {
+		return nil, errors.New("failed to found the url")
+	}
+	return &link, nil
+}
+
+func (r *linkrepo) Visit(link *entity.Link, increasedBy int) (*entity.Link, error) {
+	r.db.Model(entity.Link{}).Where("id = ?", link.ID).Update("visits_count", gorm.Expr("visits_count + ?", increasedBy))
+	return r.FindByID(link.ID)
+}
+
+func (r *linkrepo) Delete(id int64) error {
+	return r.db.Delete(&entity.Link{}, id).Error
+}
+
+func (u *linkrepo) Links(user *entity.User, offset int, limit int, search string) ([]entity.Link, error) {
+	var links []entity.Link
+
+	if search != "" {
+		if u.db.Preload("User").Order("created_at desc").Where("user_id = ?", user.ID).Where("link LIKE ?", "%"+search+"%").Offset(offset).Limit(limit).Find(&links).Error != nil {
+			return nil, errors.New("failed to found the url")
+		}
+
+		return links, nil
+	}
+
+	if u.db.Preload("User").Order("created_at desc").Where("user_id = ?", user.ID).Offset(offset).Limit(limit).Find(&links).Error != nil {
+		return nil, errors.New("failed to found the url")
+	}
+
+	return links, nil
+}
+
+func (u *linkrepo) LinksCount(user *entity.User, search string) (int64, error) {
+	var count int64
+
+	if search != "" {
+		if u.db.Model(entity.Link{}).Where("user_id = ?", user.ID).Where("link LIKE ?", "%"+search+"%").Count(&count).Error != nil {
+			return 0, errors.New("failed to found the url")
+		}
+		return count, nil
+	}
+
+	if u.db.Model(entity.Link{}).Where("user_id = ?", user.ID).Count(&count).Error != nil {
+		return 0, errors.New("failed to found the url")
+	}
+
+	return count, nil
+}

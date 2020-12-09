@@ -1,0 +1,7 @@
+.env
+client/node_modules
+client/public/dist
+**/**/.DS_Store
+server/play/
+server/files/*
+!server/files/.gitkeep

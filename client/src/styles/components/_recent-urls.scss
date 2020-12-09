@@ -1,0 +1,53 @@
+.recent-urls { 
+  margin: auto;
+  max-width: 60rem;
+  .recent-urls__title {
+    color: black;
+    font-size: 1.2rem;
+    font-weight: 500;
+  }
+  .btn-action, .btn-copy{
+    color: $text-color;
+    &:hover {
+      cursor: pointer;
+    }
+  }
+  table { 
+    width: 100%; 
+    margin-bottom: 3rem;
+    white-space: nowrap; 
+    thead, tfoot {
+      color: rgba(55, 53, 47, 0.4);
+      font-weight: normal;
+      th, td {
+        vertical-align: middle;
+        padding: .5rem .8rem;
+        overflow: hidden;
+      }
+    }
+    tbody {
+      font-weight: lighter;
+    }
+  }
+
+  .form-search {
+    input {
+      border: none;
+      &:focus {
+        border: none;
+        outline: none;
+        -webkit-box-shadow: none;
+        box-shadow: none;
+      }
+    }
+  }
+}
+
+.recent-urls-empty {
+  margin-top: -3rem;
+  img {
+    border-radius: .5rem;
+    max-width: 25rem;
+    box-shadow: 0px 3px 4px rgba(0, 0, 0, 0.2);
+  }
+}

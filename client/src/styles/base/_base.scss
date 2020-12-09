@@ -1,0 +1,31 @@
+body {
+  background-color: #EEF2F5;
+  font-family: Helvetica, Arial, sans-serif; 
+  line-height: 1.6;
+}
+
+.theme-color {
+  color: $text-color;
+}
+
+code {
+  color: $text-color;
+}
+
+.divider {
+  display: inline;
+  background-color: black;
+  width: 1px;
+  margin: 0 .8rem 0 .8rem;
+  height: 100%;
+}
+
+.rounded {
+  border-radius: .7rem!important;
+}
+
+.btn-shrug {
+  color: #fff;
+  background-color: $text-color;
+  border-color: $text-color;
+}

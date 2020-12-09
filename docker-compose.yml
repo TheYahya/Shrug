@@ -1,0 +1,71 @@
+version: '3.7'
+ 
+services:
+  shrug:
+    container_name: shrug
+    hostname: shrug
+    build: ./
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - ./server/files:/app/files
+    networks:
+      - shurg-net
+
+  postgres:
+    container_name: postgres
+    image: postgres:12.1-alpine
+    restart: always
+    volumes:
+      - shrug-postgres:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: shrug
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+    networks:
+      - shurg-net
+
+  redis-overcommit:
+    build: https://github.com/bkuhl/redis-overcommit-on-host.git
+    restart: 'no'
+    privileged: true
+    volumes:
+      - /proc/sys/vm:/mnt/vm
+      
+  redis:
+    build: ./redis
+    container_name: redis
+    hostname: redis
+    restart: always
+    privileged: true
+    volumes:
+      - shrug-redis:/usr/local/etc/redis
+      - ./redis/redis.conf:/usr/local/etc/redis/redis.conf:ro
+    networks:
+      - shurg-net
+
+  nginx:
+    image: nginx:1.18
+    container_name: nginx
+    hostname: nginx
+    restart: always
+    ports:
+      - 80:80
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+    networks:
+      - shurg-net
+
+volumes:
+  shrug-postgres:
+    name: shrug-postgres-vol
+    driver: local 
+  shrug-redis:
+    name: shrug-redis-vol
+    driver: local 
+  
+networks:
+  shurg-net:
+    name: shrug-net
+    driver: bridge
