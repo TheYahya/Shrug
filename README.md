@@ -20,4 +20,8 @@ By `docker-compose up -d` the project will be up on port `80` which you can chan
 <img style="max-width:700px; display: block;" src="./screenshots/1.png" alt="shrug.ir"/>
 <br/>
 <img style="max-width:700px; display: block;" src="./screenshots/2.png" alt="shrug.ir"/>
-</p> 
+</p>
+
+## License
+
+This software is released under the [MIT](https://github.com/TheYahya/shrug/blob/master/LICENSE) License.
