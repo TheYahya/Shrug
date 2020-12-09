@@ -6,7 +6,7 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	"net/http"
 	"os"
-	httpResponse "shrug/interfaces/response"
+	httpResponse "github.com/TheYahya/shrug/interfaces/response"
 	"strings"
 )
 

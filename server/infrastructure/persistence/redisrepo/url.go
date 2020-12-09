@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/go-redis/redis/v8"
-	"shrug/domain/entity"
-	"shrug/domain/repository"
+	"github.com/TheYahya/shrug/domain/entity"
+	"github.com/TheYahya/shrug/domain/repository"
 )
 
 type urlrepo struct {

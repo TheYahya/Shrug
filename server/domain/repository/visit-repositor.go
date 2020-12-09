@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"shrug/domain/entity"
+	"github.com/TheYahya/shrug/domain/entity"
 )
 
 type VisitRepository interface {

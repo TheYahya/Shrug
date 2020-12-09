@@ -5,8 +5,8 @@ import (
 	"gorm.io/gorm"
 	// "github.com/jinzhu/gorm"
 	// _ "github.com/jinzhu/gorm/dialects/postgres"
-	"shrug/domain/entity"
-	"shrug/domain/repository"
+	"github.com/TheYahya/shrug/domain/entity"
+	"github.com/TheYahya/shrug/domain/repository"
 )
 
 type userrepo struct {
