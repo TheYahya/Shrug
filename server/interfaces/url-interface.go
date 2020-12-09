@@ -143,7 +143,6 @@ func (*interfaces) UpdateLink(response http.ResponseWriter, request *http.Reques
 		return errors.New("Error unmarshalling data")
 	}
 
-	fmt.Println(link.ID)
 	result, err := lnkUsecase.FindByID(link.ID)
 	if err != nil {
 		return err
