@@ -1,5 +1,5 @@
 import uuid from 'uuid';
-import { add, getUrls, deleteUrl } from '../api/urlAPI'; 
+import { add, getUrls, deleteUrl, update } from '../api/urlAPI'; 
 
 // ADD_URL
 export const addUrl = (
@@ -40,6 +40,44 @@ export const startAddUrl = (url = {}) => {
         }))
       } else {
         dispatch(setAddUrlError(result.data.message));
+      }
+    })
+  }
+}
+
+// UPDATE_URL
+export const updateUrl = (
+  {
+    id = uuid(),
+    shortCode = '',
+    link = '',
+    visitsCount = 0,
+    createdAt = ''
+  }
+) => ({
+  type: 'UPDATE_URL',
+  url: {
+    id,
+    shortCode,
+    link,
+    visitsCount,
+    createdAt
+  }
+});
+
+export const startUpdateUrl = (url = {}) => {
+  return (dispatch) => { 
+    update(url).then((result) => {
+      if (result.data.ok == true) {
+        dispatch(updateUrl({
+          id: result.data.response.id,
+          shortCode: result.data.response.short_code,
+          link: result.data.response.link,
+          createdAt: result.data.response.created_at
+        }))
+      } else {
+        console.log(result.data)
+        // dispatch(setAddUrlError(result.data.message));
       }
     })
   }

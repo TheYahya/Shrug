@@ -2,17 +2,18 @@ package usecase
 
 import (
 	"errors"
-	"github.com/theyahya/random-string"
 	"github.com/TheYahya/shrug/domain/entity"
 	"github.com/TheYahya/shrug/domain/repository"
+	"github.com/theyahya/random-string"
 )
 
 type LinkUsecase interface {
-	Store(url *entity.Link) (*entity.Link, error)
-	StoreWithCode(url *entity.Link) (*entity.Link, error)
+	Store(link *entity.Link) (*entity.Link, error)
+	Update(link *entity.Link) (*entity.Link, error)
+	StoreWithCode(link *entity.Link) (*entity.Link, error)
 	FindByShortCode(code string) (*entity.Link, error)
 	FindByID(id int64) (*entity.Link, error)
-	Visit(url *entity.Link, increasedBy int) (*entity.Link, error)
+	Visit(link *entity.Link, increasedBy int) (*entity.Link, error)
 	Delete(id int64) error
 	Links(user *entity.User, offset int, limit int, search string) ([]entity.Link, error)
 	LinksCount(user *entity.User, search string) (int64, error)
@@ -41,6 +42,13 @@ func (u *usecase) Store(link *entity.Link) (*entity.Link, error) {
 
 	link.ShortCode = Code
 	return repo.Store(link)
+}
+
+func (u *usecase) Update(link *entity.Link) (*entity.Link, error) {
+	if link.ShortCode == "" {
+		return nil, errors.New("code can't be empty")
+	}
+	return repo.Update(link)
 }
 
 func (u *usecase) StoreWithCode(link *entity.Link) (*entity.Link, error) {

@@ -23,6 +23,14 @@ export default (state = urlsReducerDefaultState, action) => {
         ...state,
         urls
       }
+    case 'UPDATE_URL':
+      console.log('reducer')
+      console.log(action.url)
+      var urls = state.urls.map(function(url) { return url.id == action.url.id ? action.url: url; })
+      return {
+        ...state,
+        urls
+      }
     case 'REMOVE_URL':
       var urls = state.urls.filter(({ id }) => id !== action.id);
       state.urls = urls.sort((a,b) => (Date.parse(a.createdAt) < Date.parse(b.createdAt)) ? 1 : ((Date.parse(b.createdAt) < Date.parse(a.createdAt)) ? -1 : 0));

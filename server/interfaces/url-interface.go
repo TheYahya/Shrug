@@ -3,16 +3,17 @@ package interfaces
 import (
 	"encoding/json"
 	"errors"
-	"github.com/go-chi/chi"
-	"github.com/mssola/user_agent"
-	"net"
-	"net/http"
-	"net/url"
+	"fmt"
 	"github.com/TheYahya/shrug/domain/entity"
 	"github.com/TheYahya/shrug/infrastructure/persistence/location"
 	"github.com/TheYahya/shrug/infrastructure/persistence/queue"
 	httpResponse "github.com/TheYahya/shrug/interfaces/response"
 	"github.com/TheYahya/shrug/usecase"
+	"github.com/go-chi/chi"
+	"github.com/mssola/user_agent"
+	"net"
+	"net/http"
+	"net/url"
 	"strconv"
 	"strings"
 	"time"
@@ -30,6 +31,7 @@ var (
 // LinkInterface decleration
 type LinkInterface interface {
 	AddLink(response http.ResponseWriter, request *http.Request) error
+	UpdateLink(response http.ResponseWriter, request *http.Request) error
 	GetLink(response http.ResponseWriter, request *http.Request) error
 	DeleteLink(response http.ResponseWriter, request *http.Request) error
 	RedirectLink(response http.ResponseWriter, request *http.Request) error
@@ -131,7 +133,45 @@ func (*interfaces) AddLink(response http.ResponseWriter, request *http.Request) 
 
 	res := httpResponse.New(true, "", result)
 	return res.Done(response, http.StatusOK)
+}
 
+func (*interfaces) UpdateLink(response http.ResponseWriter, request *http.Request) error {
+	response.Header().Set("Content-Type", "application/json")
+	var link entity.Link
+	err := json.NewDecoder(request.Body).Decode(&link)
+	if err != nil {
+		return errors.New("Error unmarshalling data")
+	}
+
+	fmt.Println(link.ID)
+	result, err := lnkUsecase.FindByID(link.ID)
+	if err != nil {
+		return err
+	}
+
+	userID := request.Context().Value("userId").(int64)
+	if userID != result.UserID {
+		return errors.New("Unauthorized")
+	}
+
+	if isURL(link.Link) == false {
+		link.Link = "http://" + link.Link
+	}
+
+	if isURL(link.Link) == false {
+		return errors.New("It's not a URL")
+	}
+
+	result.ShortCode = link.ShortCode
+	result.Link = link.Link
+	result.UpdatedAt = time.Now()
+	updatedLink, err := lnkUsecase.Update(result)
+	if err != nil {
+		return err
+	}
+
+	res := httpResponse.New(true, "", updatedLink)
+	return res.Done(response, http.StatusOK)
 }
 
 func (*interfaces) GetLink(response http.ResponseWriter, request *http.Request) error {

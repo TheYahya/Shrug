@@ -2,10 +2,9 @@ package postgresrepo
 
 import (
 	"errors"
-	// "github.com/jinzhu/gorm"
-	"gorm.io/gorm"
 	"github.com/TheYahya/shrug/domain/entity"
 	"github.com/TheYahya/shrug/domain/repository"
+	"gorm.io/gorm"
 )
 
 type linkrepo struct {
@@ -22,6 +21,13 @@ func (r *linkrepo) Store(link *entity.Link) (*entity.Link, error) {
 		return nil, err
 	}
 	if err := r.db.Preload("User").First(&link).Error; err != nil {
+		return nil, err
+	}
+	return link, nil
+}
+
+func (r *linkrepo) Update(link *entity.Link) (*entity.Link, error) {
+	if err := r.db.Model(&entity.Link{}).Where("id = ?", link.ID).Updates(link).Error; err != nil {
 		return nil, err
 	}
 	return link, nil

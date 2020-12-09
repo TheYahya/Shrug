@@ -3,10 +3,6 @@ package main
 import (
 	"errors"
 	"fmt"
-	"github.com/go-chi/chi"
-	"github.com/go-chi/cors"
-	"net/http"
-	"os"
 	"github.com/TheYahya/shrug/infrastructure/persistence/location"
 	"github.com/TheYahya/shrug/infrastructure/persistence/logger"
 	"github.com/TheYahya/shrug/infrastructure/persistence/postgres"
@@ -15,6 +11,10 @@ import (
 	"github.com/TheYahya/shrug/interfaces/response"
 	"github.com/TheYahya/shrug/router"
 	"github.com/TheYahya/shrug/usecase"
+	"github.com/go-chi/chi"
+	"github.com/go-chi/cors"
+	"net/http"
+	"os"
 	"time"
 )
 
@@ -58,7 +58,7 @@ func main() {
 	r := chi.NewRouter()
 	cors := cors.New(cors.Options{
 		AllowedOrigins:   []string{"*"},
-		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedMethods:   []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
 		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
 		ExposedHeaders:   []string{"Link"},
 		AllowCredentials: true,
@@ -81,6 +81,7 @@ func main() {
 		r.Use(router.JWTMiddleware)
 		r.Get("/urls/{code}", response.ErrorHandler(urlInterface.GetLink))
 		r.Post("/urls", response.ErrorHandler(urlInterface.AddLink))
+		r.Patch("/urls", response.ErrorHandler(urlInterface.UpdateLink))
 		r.Get("/urls", response.ErrorHandler(userInterface.GetLinks))
 		r.Delete("/urls/{id}", response.ErrorHandler(urlInterface.DeleteLink))
 		r.Get("/histogram/{id}", response.ErrorHandler(urlInterface.Histogram))

@@ -20,6 +20,23 @@ export const add = (url = {}) => {
   })
 }
 
+export const update = (url = {}) => {
+  const headers = {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ' + getCookie("jwtToken")
+  }
+  var data = url
+  return axios.patch(`http://${BASE_URL}/api/v1/urls`, data, {
+    headers: headers
+  })
+  .then((response) => {
+    return response
+  })
+  .catch((error) => {
+    return error.response
+  })
+}
+
 export const getUrls = (offset = 0, limit = 0, search = '') => {
   const headers = {
     'Content-Type': 'application/json',
