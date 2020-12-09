@@ -29,7 +29,7 @@ make run-client
 ```
 Then you're development version will be up and runing on `localhost:8080`.
 
-### Deployment
+### Docker
 By `docker-compose up -d` the project will be up on port `80` which you can change it on `docker-compose.yml`.
 
 ## Contributing
