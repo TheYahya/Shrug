@@ -32,13 +32,8 @@ Then you're development version will be up and runing on `localhost:8080`.
 ### Deployment
 By `docker-compose up -d` the project will be up on port `80` which you can change it on `docker-compose.yml`.
 
-### Screnshots
-<p align="center">
-<img style="max-width:500px; display: block;" src="./screenshots/1.png" alt="shrug.ir"/>
-<br/>
-<img style="max-width:500px; display: block;" src="./screenshots/2.png" alt="shrug.ir"/>
-</p> 
-
+## Contributing
+You can fork the repository, improve or fix some part of it and then send a pull requests. Or simply open and issue if there's a bug or you have a feature in mind.
 
 ## License
 
