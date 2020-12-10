@@ -18,17 +18,17 @@ func NewLinkRepository(db *gorm.DB) repository.LinkRepository {
 
 func (r *linkrepo) Store(link *entity.Link) (*entity.Link, error) {
 	if err := r.db.Create(link).Error; err != nil {
-		return nil, err
+		return nil, errors.New("unable to create user")
 	}
 	if err := r.db.Preload("User").First(&link).Error; err != nil {
-		return nil, err
+		return nil, errors.New("unable to fetch user")
 	}
 	return link, nil
 }
 
 func (r *linkrepo) Update(link *entity.Link) (*entity.Link, error) {
 	if err := r.db.Model(&entity.Link{}).Where("id = ?", link.ID).Updates(link).Error; err != nil {
-		return nil, err
+		return nil, errors.New("can't update the link")
 	}
 	return link, nil
 }
@@ -57,38 +57,41 @@ func (r *linkrepo) Visit(link *entity.Link, increasedBy int) (*entity.Link, erro
 }
 
 func (r *linkrepo) Delete(id int64) error {
-	return r.db.Delete(&entity.Link{}, id).Error
+	if err := r.db.Delete(&entity.Link{}, id).Error; err != nil {
+		return errors.New("unable to delete the link")
+	}
+	return nil
 }
 
-func (u *linkrepo) Links(user *entity.User, offset int, limit int, search string) ([]entity.Link, error) {
+func (r *linkrepo) Links(user *entity.User, offset int, limit int, search string) ([]entity.Link, error) {
 	var links []entity.Link
 
 	if search != "" {
-		if u.db.Preload("User").Order("created_at desc").Where("user_id = ?", user.ID).Where("link LIKE ?", "%"+search+"%").Offset(offset).Limit(limit).Find(&links).Error != nil {
+		if r.db.Preload("User").Order("created_at desc").Where("user_id = ?", user.ID).Where("link LIKE ?", "%"+search+"%").Offset(offset).Limit(limit).Find(&links).Error != nil {
 			return nil, errors.New("failed to found the url")
 		}
 
 		return links, nil
 	}
 
-	if u.db.Preload("User").Order("created_at desc").Where("user_id = ?", user.ID).Offset(offset).Limit(limit).Find(&links).Error != nil {
+	if r.db.Preload("User").Order("created_at desc").Where("user_id = ?", user.ID).Offset(offset).Limit(limit).Find(&links).Error != nil {
 		return nil, errors.New("failed to found the url")
 	}
 
 	return links, nil
 }
 
-func (u *linkrepo) LinksCount(user *entity.User, search string) (int64, error) {
+func (r *linkrepo) LinksCount(user *entity.User, search string) (int64, error) {
 	var count int64
 
 	if search != "" {
-		if u.db.Model(entity.Link{}).Where("user_id = ?", user.ID).Where("link LIKE ?", "%"+search+"%").Count(&count).Error != nil {
+		if r.db.Model(entity.Link{}).Where("user_id = ?", user.ID).Where("link LIKE ?", "%"+search+"%").Count(&count).Error != nil {
 			return 0, errors.New("failed to found the url")
 		}
 		return count, nil
 	}
 
-	if u.db.Model(entity.Link{}).Where("user_id = ?", user.ID).Count(&count).Error != nil {
+	if r.db.Model(entity.Link{}).Where("user_id = ?", user.ID).Count(&count).Error != nil {
 		return 0, errors.New("failed to found the url")
 	}
 

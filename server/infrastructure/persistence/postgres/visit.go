@@ -3,9 +3,9 @@ package postgresrepo
 import (
 	"errors"
 	// "github.com/jinzhu/gorm"
-	"gorm.io/gorm"
 	"github.com/TheYahya/shrug/domain/entity"
 	"github.com/TheYahya/shrug/domain/repository"
+	"gorm.io/gorm"
 )
 
 type visitrepo struct {
@@ -75,106 +75,28 @@ func (v *visitrepo) VisitHistogramByDay(id int64, days int64) ([]entity.VisitSta
 
 func (v *visitrepo) VisitStatsCountryCode(id int64) ([]entity.VisitStat, error) {
 	var stats []entity.VisitStat
-
-	v.db.Raw(`select country_code as key, count(country_code) as value from visits WHERE link_id = ? group by country_code order by value desc;`, id).Scan(&stats)
-
+	v.db.Raw(`SELECT country_code AS key, COUNT(country_code) AS value FROM visits WHERE link_id = ? GRPUP BY country_code GROUP BY value desc;`, id).Scan(&stats)
 	return stats, nil
 }
 
 func (v *visitrepo) VisitStatsCity(id int64) ([]entity.VisitStat, error) {
 	var stats []entity.VisitStat
-
-	v.db.Raw(`SELECT p.city AS key, sum(p.count::numeric) AS value FROM  visits b, jsonb_each(b.city) p(city, count) where link_id = ? GROUP  BY p.city;`, id).Scan(&stats)
-
+	v.db.Raw(`SELECT p.city AS key, SUM(p.count::numeric) AS value FROM  visits b, jsonb_each(b.city) p(city, count) WHERE link_id = ? GROUP  BY p.city;`, id).Scan(&stats)
 	return stats, nil
 }
 
 func (v *visitrepo) VisitStatsBrowsers(id int64) ([]entity.VisitStat, error) {
-	// var count int64
 	var stats []entity.VisitStat
-
-	v.db.Raw(`select key as key, value  as value from (select sum(br_chrome) as Chrome, sum(br_firefox) as Firefox, sum(br_opera) as Opera, sum(br_edge) as Edge, sum(br_ie) as IE, sum(br_other) as Others from  visits where link_id=?  group by link_id) c, lateral json_each(row_to_json(c));`, id).Scan(&stats)
-
-	// v.db.Model(&entity.Visit{}).Where("link_id = ? AND browser = ?", id, "chrome").Count(&count)
-	// stats = append(stats, entity.VisitStat{
-	// 	Key:   "Chrome",
-	// 	Value: count,
-	// })
-
-	// v.db.Model(&entity.Visit{}).Where("link_id = ? AND browser = ?", id, "firefox").Count(&count)
-	// stats = append(stats, entity.VisitStat{
-	// 	Key:   "Firefox",
-	// 	Value: count,
-	// })
-
-	// v.db.Model(&entity.Visit{}).Where("link_id = ? AND browser = ?", id, "safari").Count(&count)
-	// stats = append(stats, entity.VisitStat{
-	// 	Key:   "Safari",
-	// 	Value: count,
-	// })
-
-	// v.db.Model(&entity.Visit{}).Where("link_id = ? AND browser = ?", id, "edge").Count(&count)
-	// stats = append(stats, entity.VisitStat{
-	// 	Key:   "Edge",
-	// 	Value: count,
-	// })
-
-	// v.db.Model(&entity.Visit{}).Where("link_id = ? AND browser = ?", id, "ie").Count(&count)
-	// stats = append(stats, entity.VisitStat{
-	// 	Key:   "IE",
-	// 	Value: count,
-	// })
-
-	// v.db.Model(&entity.Visit{}).Where("link_id = ? AND browser = ?", id, "opera").Count(&count)
-	// stats = append(stats, entity.VisitStat{
-	// 	Key:   "Opera",
-	// 	Value: count,
-	// })
-
-	// v.db.Model(&entity.Visit{}).Where("link_id = ? AND browser <> ? AND browser <> ? AND browser <> ? AND browser <> ? AND browser <> ? AND browser <> ?", id, "chrome", "firefox", "safari", "edge", "ie", "opera").Count(&count)
-	// stats = append(stats, entity.VisitStat{
-	// 	Key:   "Other",
-	// 	Value: count,
-	// })
-
+	v.db.Raw(`SELECT key AS key, value AS value FROM 
+	(SELECT SUM(br_chrome) AS Chrome, SUM(br_firefox) AS Firefox, SUM(br_opera) AS Opera, SUM(br_edge) AS Edge, SUM(br_ie) AS IE, SUM(br_other) AS Others FROM visits 
+	WHERE link_id=?  GROUP BY link_id) c, lateral json_each(row_to_json(c));`, id).Scan(&stats)
 	return stats, nil
 }
 
 func (v *visitrepo) VisitStatsOS(id int64) ([]entity.VisitStat, error) {
-	// var count int64
 	var stats []entity.VisitStat
-
-	v.db.Raw(`select key as key, value  as value from (select sum(os_android) as Android, sum(osios) as IOS, sum(os_linux) as Linux, sum(os_mac) as Mac, sum(os_windows) as Window, sum(os_other) as Others from visits where link_id=? group by link_id) c, lateral json_each(row_to_json(c));`, id).Scan(&stats)
-
-	// v.db.Model(&entity.Visit{}).Where("link_id = ? AND os LIKE ?", id, "%mac%").Count(&count)
-	// stats = append(stats, entity.VisitStat{
-	// 	Key:   "Mac",
-	// 	Value: count,
-	// })
-
-	// v.db.Model(&entity.Visit{}).Where("link_id = ? AND os LIKE ?", id, "%android%").Count(&count)
-	// stats = append(stats, entity.VisitStat{
-	// 	Key:   "Android",
-	// 	Value: count,
-	// })
-
-	// v.db.Model(&entity.Visit{}).Where("link_id = ? AND os LIKE ?", id, "%linux%").Count(&count)
-	// stats = append(stats, entity.VisitStat{
-	// 	Key:   "Linux",
-	// 	Value: count,
-	// })
-
-	// v.db.Model(&entity.Visit{}).Where("link_id = ? AND os LIKE ?", id, "%indows%").Count(&count)
-	// stats = append(stats, entity.VisitStat{
-	// 	Key:   "Windows",
-	// 	Value: count,
-	// })
-
-	// v.db.Model(&entity.Visit{}).Where("link_id = ? AND os NOT LIKE ? AND os NOT LIKE ? AND os NOT LIKE ? AND os NOT LIKE ? ", id, "%mac%", "%android%", "%linux%", "%indows%").Count(&count)
-	// stats = append(stats, entity.VisitStat{
-	// 	Key:   "Other",
-	// 	Value: count,
-	// })
-
+	v.db.Raw(`SELECT key AS key, value AS value FROM 
+	(SELECT SUM(os_android) AS Android, SUM(osios) AS IOS, SUM(os_linux) AS Linux, SUM(os_mac) AS Mac, SUM(os_windows) AS Window, SUM(os_other) AS Others FROM visits 
+	WHERE link_id=? GROUP BY link_id) c, lateral json_each(row_to_json(c));`, id).Scan(&stats)
 	return stats, nil
 }
