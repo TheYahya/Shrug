@@ -73,6 +73,7 @@ export const startUpdateUrl = (url = {}) => {
           id: result.data.response.id,
           shortCode: result.data.response.short_code,
           link: result.data.response.link,
+          visitsCount: result.data.response.visits_count,
           createdAt: result.data.response.created_at
         }))
       } else {

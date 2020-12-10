@@ -3,7 +3,6 @@ package interfaces
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"github.com/TheYahya/shrug/domain/entity"
 	"github.com/TheYahya/shrug/infrastructure/persistence/location"
 	"github.com/TheYahya/shrug/infrastructure/persistence/queue"
