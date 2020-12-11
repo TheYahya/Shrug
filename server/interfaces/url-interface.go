@@ -38,6 +38,8 @@ type LinkInterface interface {
 	BrowsersStats(response http.ResponseWriter, request *http.Request) error
 	OsStats(response http.ResponseWriter, request *http.Request) error
 	OverviewStats(response http.ResponseWriter, request *http.Request) error
+	CityStats(response http.ResponseWriter, request *http.Request) error
+	RefererStats(response http.ResponseWriter, request *http.Request) error
 }
 
 // NewLinkInterface returns a urlInterface
@@ -301,7 +303,50 @@ func (*interfaces) BrowsersStats(response http.ResponseWriter, request *http.Req
 
 	response.WriteHeader(http.StatusOK)
 	return json.NewEncoder(response).Encode(res)
+}
 
+func (*interfaces) CityStats(response http.ResponseWriter, request *http.Request) error {
+	stringID := chi.URLParam(request, "id")
+	id, err := strconv.ParseInt(stringID, 10, 64)
+	if err != nil {
+		return err
+	}
+
+	if hasPermission(request.Context().Value("userId").(int64), id) != true {
+		return errors.New("Unauthorized")
+	}
+
+	result, err := vstUsecase.VisitStatsCity(id)
+	if err != nil {
+		return err
+	}
+
+	res := httpResponse.New(true, "", result)
+
+	response.WriteHeader(http.StatusOK)
+	return json.NewEncoder(response).Encode(res)
+}
+
+func (*interfaces) RefererStats(response http.ResponseWriter, request *http.Request) error {
+	stringID := chi.URLParam(request, "id")
+	id, err := strconv.ParseInt(stringID, 10, 64)
+	if err != nil {
+		return err
+	}
+
+	if hasPermission(request.Context().Value("userId").(int64), id) != true {
+		return errors.New("Unauthorized")
+	}
+
+	result, err := vstUsecase.VisitStatsReferer(id)
+	if err != nil {
+		return err
+	}
+
+	res := httpResponse.New(true, "", result)
+
+	response.WriteHeader(http.StatusOK)
+	return json.NewEncoder(response).Encode(res)
 }
 
 func (*interfaces) OsStats(response http.ResponseWriter, request *http.Request) error {

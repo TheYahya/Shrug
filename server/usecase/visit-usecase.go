@@ -16,6 +16,7 @@ type VisitUsecase interface {
 	VisitStatsOS(id int64) ([]entity.VisitStat, error)
 	VisitStatsCountryCode(id int64) ([]entity.VisitStat, error)
 	VisitStatsCity(id int64) ([]entity.VisitStat, error)
+	VisitStatsReferer(id int64) ([]entity.VisitStat, error)
 }
 
 type visitUsecase struct{}
@@ -68,4 +69,8 @@ func (*visitUsecase) VisitStatsCountryCode(id int64) ([]entity.VisitStat, error)
 
 func (*visitUsecase) VisitStatsCity(id int64) ([]entity.VisitStat, error) {
 	return visitRepo.VisitStatsCity(id)
+}
+
+func (*visitUsecase) VisitStatsReferer(id int64) ([]entity.VisitStat, error) {
+	return visitRepo.VisitStatsReferer(id)
 }

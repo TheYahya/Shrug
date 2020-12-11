@@ -4,6 +4,8 @@ const statsReducerDefaultState = {
   days: [],
   browsers: [],
   os: [],
+  city: [],
+  referer: [],
   overview: {
     "code": "",
     "link": "No data",
@@ -25,30 +27,32 @@ export default (state = statsReducerDefaultState, action) => {
   switch (action.type) {
     case 'ADD_DAYS':
       return {
-        days: action.days,
-        browsers: state.browsers,
-        os: state.os,
-        overview: state.overview
+        ...state,
+        days: action.days
       };
     case 'ADD_BROWSERS':
       return {
-        days: state.days,
-        browsers: action.browsers,
-        os: state.os,
-        overview: state.overview
+        ...state,
+        browsers: action.browsers
       };
     case 'ADD_OS':
       return {
-        days: state.days,
-        browsers: state.browsers,
-        os: action.os,
-        overview: state.overview
+        ...state,
+        os: action.os
+      };
+    case 'ADD_CITY':
+      return {
+        ...state,
+        city: action.city
+      };
+    case 'ADD_REFERER':
+      return {
+        ...state,
+        referer: action.referer
       };
     case 'ADD_OVERVIEW':
       return {
-        days: state.days,
-        browsers: state.browsers,
-        os: state.os,
+        ...state,
         overview: action.overview
       };
     case 'CLEAN_UP_STATS':

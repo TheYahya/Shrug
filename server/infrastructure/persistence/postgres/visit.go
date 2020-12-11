@@ -81,7 +81,13 @@ func (v *visitrepo) VisitStatsCountryCode(id int64) ([]entity.VisitStat, error) 
 
 func (v *visitrepo) VisitStatsCity(id int64) ([]entity.VisitStat, error) {
 	var stats []entity.VisitStat
-	v.db.Raw(`SELECT p.city AS key, SUM(p.count::numeric) AS value FROM  visits b, jsonb_each(b.city) p(city, count) WHERE link_id = ? GROUP  BY p.city;`, id).Scan(&stats)
+	v.db.Raw(`SELECT p.city AS key, SUM(p.count::numeric) AS value FROM visits b, jsonb_each(b.city) p(city, count) WHERE link_id = ? GROUP  BY p.city;`, id).Scan(&stats)
+	return stats, nil
+}
+
+func (v *visitrepo) VisitStatsReferer(id int64) ([]entity.VisitStat, error) {
+	var stats []entity.VisitStat
+	v.db.Raw(`SELECT p.referer AS key, SUM(p.count::numeric) AS value FROM visits b, jsonb_each(b.referer) p(referer, count) WHERE link_id = ? GROUP  BY p.referer;`, id).Scan(&stats)
 	return stats, nil
 }
 

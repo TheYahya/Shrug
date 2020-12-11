@@ -15,4 +15,5 @@ type VisitRepository interface {
 	VisitStatsOS(id int64) ([]entity.VisitStat, error)
 	VisitStatsCountryCode(id int64) ([]entity.VisitStat, error)
 	VisitStatsCity(id int64) ([]entity.VisitStat, error)
+	VisitStatsReferer(id int64) ([]entity.VisitStat, error)
 }

@@ -86,6 +86,8 @@ func main() {
 		r.Delete("/urls/{id}", response.ErrorHandler(urlInterface.DeleteLink))
 		r.Get("/histogram/{id}", response.ErrorHandler(urlInterface.Histogram))
 		r.Get("/browsers-stats/{id}", response.ErrorHandler(urlInterface.BrowsersStats))
+		r.Get("/city-stats/{id}", response.ErrorHandler(urlInterface.CityStats))
+		r.Get("/referer-stats/{id}", response.ErrorHandler(urlInterface.RefererStats))
 		r.Get("/os-stats/{id}", response.ErrorHandler(urlInterface.OsStats))
 		r.Get("/overview-stats/{id}", response.ErrorHandler(urlInterface.OverviewStats))
 		r.Get("/users", response.ErrorHandler(userInterface.GetUser))

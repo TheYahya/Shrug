@@ -1,14 +1,21 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { startAddDays, startAddBrowsersStats, startAddOSStats, startaddOverviewStats, cleanUpStats } from '../actions/stats';
-import { faEye, faMapMarkedAlt } from '@fortawesome/free-solid-svg-icons' 
+import { 
+  startAddDays, 
+  startAddBrowsersStats, 
+  startAddOSStats, 
+  startaddOverviewStats, 
+  cleanUpStats, 
+  startAddCityStats, 
+  startAddRefererStats 
+} from '../actions/stats';
+import { faEye, faMapMarkedAlt, faLink, faGlobe } from '@fortawesome/free-solid-svg-icons' 
 import { faWindows, faChrome } from '@fortawesome/free-brands-svg-icons'
 import { Link } from 'react-router-dom';
 import { withComma } from '../utils';
 import TotalViews from './stats/TotalViews';
-import Browsers from './stats/Browsers';
 import Tile from './stats/Tile';
-import Os from './stats/Os';
+import StatsBarChart from './stats/StatsBarChart';
 
 const BASE_URL = process.env.API_BASE_URL
 
@@ -20,6 +27,8 @@ class UrlStats extends React.Component {
     this.props.startAddDays(id);
     this.props.startAddBrowsersStats(id);
     this.props.startAddOSStats(id);
+    this.props.startAddRefererStats(id);
+    this.props.startAddCityStats(id);
   }
   render() {
     const topLocation = this.props.stats.overview.top_location.length >= 12 ? this.props.stats.overview.top_location.substr(0, 10) + '...' : this.props.stats.overview.top_location;
@@ -64,8 +73,12 @@ class UrlStats extends React.Component {
             </div>
             <TotalViews data={this.props.stats.days} />
             <div className="row">
-              <Browsers data={this.props.stats.browsers} />
-              <Os data={this.props.stats.os} />
+              <StatsBarChart data={this.props.stats.browsers} title="Browsers." icon={faChrome} />
+              <StatsBarChart data={this.props.stats.os} title="OS." icon={faWindows} />
+            </div>
+            <div className="row">
+              <StatsBarChart data={this.props.stats.referer} title="Referers." icon={faLink} />
+              <StatsBarChart data={this.props.stats.city} title="cities." icon={faGlobe} />
             </div>
             <div className="text-center m-4 p-3">
               <Link className="btn btn-shrug" to="/">Go back to dashboard</Link>
@@ -89,6 +102,8 @@ const mapDispatchToProps = (dispatch) => ({
   startAddBrowsersStats: (id) => dispatch(startAddBrowsersStats(id)),
   startAddOSStats: (id) => dispatch(startAddOSStats(id)),
   startaddOverviewStats: (id) => dispatch(startaddOverviewStats(id)),
+  startAddCityStats: (id) => dispatch(startAddCityStats(id)),
+  startAddRefererStats: (id) => dispatch(startAddRefererStats(id)),
   cleanUpStats: () => dispatch(cleanUpStats())
 });
 

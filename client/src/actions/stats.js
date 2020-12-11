@@ -1,4 +1,4 @@
-import { getDaysAPI, getBrowsersStatsAPI, getOSStatsAPI, getOverviewStatsAPI } from '../api/urlAPI';
+import { getDaysAPI, getBrowsersStatsAPI, getOSStatsAPI, getOverviewStatsAPI, getCityStatsAPI, getRefererStatsAPI } from '../api/urlAPI';
 
 // ADD_DAYS
 export const addDays = (days) => ({
@@ -56,3 +56,29 @@ export const startaddOverviewStats = (id) => {
 export const cleanUpStats = () => ({
   type: 'CLEAN_UP_STATS'
 })
+
+export const addCity = (city) => ({
+  type: 'ADD_CITY',
+  city: city
+});
+
+export const startAddCityStats = (id) => {
+  return (dispatch) => {
+    getCityStatsAPI(id).then((result) => {
+      dispatch(addCity(result))
+    })
+  }
+}
+
+export const addReferer = (referer) => ({
+  type: 'ADD_REFERER',
+  referer: referer
+});
+
+export const startAddRefererStats = (id) => {
+  return (dispatch) => {
+    getRefererStatsAPI(id).then((result) => {
+      dispatch(addReferer(result))
+    })
+  }
+}

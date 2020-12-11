@@ -3,14 +3,14 @@ import {
   BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer
 } from 'recharts';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faChrome } from '@fortawesome/free-brands-svg-icons'
+import { faWindows } from '@fortawesome/free-brands-svg-icons'
 
-class Browsers extends React.Component {
+class StatsBarChart extends React.Component {
   render() {
     return (
       <div className="col-6">
         <div className=" chart-wrapper rounded">
-          <h4 className="chart__title"><FontAwesomeIcon icon={faChrome} /> Browsers.</h4>
+          <h4 className="chart__title"><FontAwesomeIcon icon={ this.props.icon } /> { this.props.title }</h4>
           <ResponsiveContainer
             width="100%"
             height={window.innerWidth < 468 ? 240 : 320}
@@ -21,7 +21,7 @@ class Browsers extends React.Component {
                 top: 20, right: 30, left: 20, bottom: 10,
               }}
               barSize={10}
-              >
+            >
               <XAxis dataKey="key" scale="point" padding={{ left: 10, right: 10 }} />
               <YAxis /> 
               <Tooltip />
@@ -35,4 +35,4 @@ class Browsers extends React.Component {
   }
 }
 
-export default Browsers;
+export default StatsBarChart;
