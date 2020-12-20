@@ -1,17 +1,17 @@
 // qrcode Reducer
 
 const qrcodeReducerDefaultState = {
-  data: null
+  data: null,
 };
 
 export default (state = qrcodeReducerDefaultState, action) => {
   switch (action.type) {
     case 'ADD_DATA':
       return {
-        data: action.data
-      }
+        data: action.data,
+      };
     case 'REMOVE_QRCODE':
-      return qrcodeReducerDefaultState
+      return qrcodeReducerDefaultState;
     default:
       return state;
   }

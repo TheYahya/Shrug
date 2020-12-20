@@ -1,12 +1,12 @@
 import { getCookie } from '../utils';
 
-const jwtToken = getCookie("jwtToken")
+const jwtToken = getCookie('jwtToken');
 
 const defaultAuth = {
   isAuthenticated: false,
   email: null,
-  jwtToken: jwtToken
-}
+  jwtToken,
+};
 
 export default (state = defaultAuth, action) => {
   switch (action.type) {
@@ -15,13 +15,13 @@ export default (state = defaultAuth, action) => {
       return {
         isAuthenticated: true,
         email: action.email,
-        jwtToken: action.jwtToken
+        jwtToken: action.jwtToken,
       };
     case 'LOGOUT':
       return {
         isAuthenticated: false,
         email: null,
-        jwtToken: null
+        jwtToken: null,
       };
     default:
       return state;

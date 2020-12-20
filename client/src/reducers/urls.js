@@ -7,68 +7,87 @@ const urlsReducerDefaultState = {
   limit: 0,
   search: '',
   currentTotal: 0,
-  addUrlError: null
+  addUrlError: null,
 };
 
 export default (state = urlsReducerDefaultState, action) => {
   switch (action.type) {
-    case 'ADD_URL':
-      var urls = [
+    case 'ADD_URL': {
+      const urls = [
         ...state.urls,
-        action.url
+        action.url,
       ];
-      state.urls = urls.sort((a,b) => (Date.parse(a.createdAt) < Date.parse(b.createdAt)) ? 1 : ((Date.parse(b.createdAt) < Date.parse(a.createdAt)) ? -1 : 0));
-      state.currentTotal = state.urls.length
       return {
         ...state,
-        urls
-      }
-    case 'UPDATE_URL':
-      var urls = state.urls.map(function(url) { return url.id == action.url.id ? action.url: url; })
+        urls: urls.sort(
+          (a, b) => {
+            const aDatetime = Date.parse(a.createdAt);
+            const bDatetime = Date.parse(b.createdAt);
+
+            if (aDatetime < bDatetime) {
+              return 1;
+            }
+            if (aDatetime > bDatetime) {
+              return -1;
+            }
+            return 0;
+          },
+        ),
+        currentTotal: urls.length,
+      };
+    }
+    case 'UPDATE_URL': {
+      const urls = state.urls.map((url) => (url.id === action.url.id ? action.url : url));
       return {
         ...state,
-        urls
-      }
-    case 'REMOVE_URL':
-      var urls = state.urls.filter(({ id }) => id !== action.id);
-      state.urls = urls.sort((a,b) => (Date.parse(a.createdAt) < Date.parse(b.createdAt)) ? 1 : ((Date.parse(b.createdAt) < Date.parse(a.createdAt)) ? -1 : 0));
-      state.currentTotal = state.urls.length
+        urls,
+      };
+    }
+    case 'REMOVE_URL': {
+      const urls = state.urls.filter(({ id }) => id !== action.id);
       return {
         ...state,
-        urls
-      } 
+        urls,
+        currentTotal: urls.length,
+      };
+    }
     case 'CLEAN_UP_URLS':
-      return urlsReducerDefaultState
-    case 'SET_TOTAL':
-      const total = action.total
+      return urlsReducerDefaultState;
+    case 'SET_TOTAL': {
+      const { total } = action;
       return {
         ...state,
-        total
-      }
-    case 'SET_OFFSET':
-      const offset = action.offset
+        total,
+      };
+    }
+    case 'SET_OFFSET': {
+      const { offset } = action;
       return {
         ...state,
-        offset
-      }
-    case 'SET_LIMIT':
-      const limit = action.limit
+        offset,
+      };
+    }
+    case 'SET_LIMIT': {
+      const { limit } = action;
       return {
         ...state,
-        limit
-      }
-    case 'SET_SEARCH':
-      const search = action.search
+        limit,
+      };
+    }
+    case 'SET_SEARCH': {
+      const { search } = action;
       return {
         ...state,
-        search
-      }
-    case 'SET_ADD_URL_ERROR':
-      const addUrlError = action.addUrlError
+        search,
+      };
+    }
+    case 'SET_ADD_URL_ERROR': {
+      const { addUrlError } = action;
       return {
         ...state,
-        addUrlError
-      }
+        addUrlError,
+      };
+    }
     default:
       return state;
   }
