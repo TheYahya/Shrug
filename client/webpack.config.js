@@ -22,7 +22,7 @@ module.exports = (env, argv) => {
   const CSSExtract = new ExtractTextPlugin('styles.css');
   const isDevMode = argv.mode === 'development';
   return {
-    entry: './src/app.js',
+    entry: './src/App.jsx',
     output: {
       path: path.join(__dirname, 'public', 'dist'),
       filename: 'bundle.js'
@@ -79,13 +79,13 @@ module.exports = (env, argv) => {
     //   },
     // },
 
-    plugins: [ 
+    plugins: [
       CSSExtract,
       new CleanWebpackPlugin(),
       // new HtmlWebpackPlugin({
       //   template: path.join(__dirname, 'public', 'index.ejs'),
       //   filename: path.join(__dirname, 'public', 'index.html'),
-      // }), 
+      // }),
       new webpack.DefinePlugin({
         'process.env': {
           NODE_ENV: JSON.stringify(process.env.NODE_ENV),
