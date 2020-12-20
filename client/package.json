@@ -9,7 +9,21 @@
     "build:prod": "webpack -p --env production",
     "dev-server": "webpack-dev-server",
     "test": "cross-env NODE_ENV=test jest --config=jest.config.json",
+    "eslint": "eslint . --ext .js,.jsx --ignore-path .gitignore",
+    "eslint:fix": "npm run eslint -- --fix",
     "start": "node server/server.js"
+  },
+  "eslintConfig": {
+    "plugins": [
+      "react-hooks"
+    ],
+    "extends": [
+      "airbnb"
+    ],
+    "env": {
+      "browser": true,
+      "jest": true
+    }
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.15.1",
@@ -63,6 +77,12 @@
     "dotenv": "4.0.0",
     "enzyme": "2.9.1",
     "enzyme-to-json": "1.5.1",
+    "eslint": "^7.2.0",
+    "eslint-config-airbnb": "^18.2.1",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-jsx-a11y": "^6.4.1",
+    "eslint-plugin-react": "^7.21.5",
+    "eslint-plugin-react-hooks": "^4.0.0",
     "jest": "20.0.4",
     "react-test-renderer": "17.0.0",
     "webpack": "^4.44.2",
