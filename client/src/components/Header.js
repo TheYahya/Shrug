@@ -3,31 +3,66 @@ import { connect } from 'react-redux';
 import { startLogout } from '../actions/auth';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
-import { Link } from 'react-router-dom';
+import { Container, Navbar, Nav, Button, Badge } from 'react-bootstrap';
 
-class Header extends React.Component {
-  render() { 
-    const auth = this.props.auth.isAuthenticated === true ? <button className="btn btn-outline-secondary btn-sm" onClick={() => { this.props.startLogout() }}><FontAwesomeIcon icon={faSignOutAlt}/> Logout</button> : '';
-    const userEmail = <span className="badge badge-light">{this.props.auth.email}</span>
-    return (
-      <header> 
-        <nav className="navbar navbar-light">
-          <span className="navbar-text">
-            <Link className="navbar-brand" to="/">
-              <img src="/images/shrug-ir.png" />
-            </Link>
-            <a className="navbar-text__link" href="https://github.com/theyahya/shrug" target="_blank">Github</a>
-          </span>
-          <div className="nav-right">
-          { this.props.auth.isAuthenticated && userEmail }
-          &nbsp;
-          { auth }
+const Header = ({ auth, startLogout }) => {
+  const { isAuthenticated, email } = auth;
+
+  const logout = () => startLogout();
+
+  return (
+    <Container
+      as="header"
+      fluid
+    >
+      <Navbar
+        bg="transparent"
+        expand="md"
+        collapseOnSelect
+      >
+        <Navbar.Brand>
+          <Nav.Link to="/">
+            <img src="/images/shrug-ir.png" />
+          </Nav.Link>
+        </Navbar.Brand>
+        <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+        <Navbar.Collapse id="responsive-navbar-nav">
+          <div className="d-flex w-100">
+            <Nav className="mr-auto">
+              <Nav.Link
+                href="https://github.com/theyahya/shrug"
+                target="blank"
+              >
+                Github
+              </Nav.Link>
+            </Nav>
+            <Navbar.Text>
+              {isAuthenticated && (
+                <Badge
+                  variant="light"
+                  className="mr-1"
+                >
+                  {email}
+                </Badge>
+              )}
+              {
+                isAuthenticated && (
+                  <Button
+                    onClick={logout}
+                    variant="outline-secondary"
+                    size="sm"
+                  >
+                    <FontAwesomeIcon icon={faSignOutAlt} /> Logout
+                  </Button>
+                )
+              }
+            </Navbar.Text>
           </div>
-        </nav>
-      </header>
-    )
-  }
-} 
+        </Navbar.Collapse>
+      </Navbar>
+    </Container>
+  );
+}
 
 const mapSteteToProps = (state) => {
   return {
