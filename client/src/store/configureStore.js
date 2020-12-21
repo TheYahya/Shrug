@@ -1,4 +1,6 @@
-import { createStore, combineReducers, applyMiddleware, compose } from 'redux';
+import {
+  createStore, combineReducers, applyMiddleware, compose,
+} from 'redux';
 import thunk from 'redux-thunk';
 import authReducer from '../reducers/auth';
 import urlsReducer from '../reducers/urls';
@@ -13,9 +15,9 @@ export default () => {
       auth: authReducer,
       urls: urlsReducer,
       stats: statsReducer,
-      qrcode: qrcodeReducer
+      qrcode: qrcodeReducer,
     }),
-    composeEnhancers(applyMiddleware(thunk))
+    composeEnhancers(applyMiddleware(thunk)),
   );
 
   return store;

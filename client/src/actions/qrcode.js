@@ -1,10 +1,9 @@
-
 // ADD_DATA
 export const addData = (data) => ({
   type: 'ADD_DATA',
-  data: data
+  data,
 });
 
 export const removeQRCode = () => ({
-  type: 'REMOVE_QRCODE'
+  type: 'REMOVE_QRCODE',
 });

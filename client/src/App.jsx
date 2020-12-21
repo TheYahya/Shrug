@@ -13,14 +13,14 @@ import './styles/styles.scss';
 
 const store = configureStore();
 
-if (getCookie("jwtToken")) {
+if (getCookie('jwtToken')) {
   store.dispatch(startLoadUser());
   store.dispatch(startGetUrls());
 }
 
 const jsx = (
-  <Provider store={store}> 
-      <AppRouter /> 
+  <Provider store={store}>
+    <AppRouter />
   </Provider>
 );
 
