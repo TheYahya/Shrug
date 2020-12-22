@@ -1,15 +1,15 @@
 import React from 'react';
-import NewUrl from './NewUrl';
-import RecentUrls from './RecentUrls';
 import { connect } from 'react-redux';
 import QRCodeModal from './QRCodeModal';
+import NewUrl from './NewUrl';
+import RecentUrls from './RecentUrls';
 
 const DashboardPage = (props) => {
   if (props.auth.isAuthenticated) {
     return (
         <div>
           <NewUrl />
-          <RecentUrls /> 
+          <RecentUrls />
           <QRCodeModal />
         </div>
     )
