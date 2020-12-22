@@ -45,7 +45,7 @@ const NewUrl = ({ auth, urls, addUrl }) => {
   return (
     <Form
       onSubmit={onSubmit}
-      className="new-link"
+      className="new-link px-3"
     >
       <Form.Row>
         <Form.Group className="col-12">
