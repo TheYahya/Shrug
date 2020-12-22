@@ -23,6 +23,9 @@
     "env": {
       "browser": true,
       "jest": true
+    },
+    "rules": {
+      "react/jsx-props-no-spreading": "off"
     }
   },
   "dependencies": {
