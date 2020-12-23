@@ -148,7 +148,7 @@ const RecentUrls = ({ urls, getUrls }) => {
           </tr>
         </thead>
         <tbody>
-          {urls.urls.map((url) => <UrlItem key={url.id} {...url} />)}
+          {urls.urls.map((url) => <UrlItem key={url.id} url={url} />)}
         </tbody>
         <tfoot>
           <tr>
@@ -176,9 +176,13 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 LimitButton.propTypes = {
-  className: PropTypes.string.isRequired,
+  className: PropTypes.string,
   onClick: PropTypes.func.isRequired,
   children: PropTypes.node.isRequired,
+};
+
+LimitButton.defaultProps = {
+  className: '',
 };
 
 NavigateButton.propTypes = {
