@@ -1,14 +1,19 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { startLogout } from '../actions/auth';
+import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
-import { Container, Navbar, Nav, Button, Badge } from 'react-bootstrap';
+import {
+  Container,
+  Navbar,
+  Nav,
+  Button,
+  Badge,
+} from 'react-bootstrap';
+import { startLogout } from '../actions/auth';
 
-const Header = ({ auth, startLogout }) => {
+const Header = ({ auth, logout }) => {
   const { isAuthenticated, email } = auth;
-
-  const logout = () => startLogout();
 
   return (
     <Container
@@ -22,7 +27,7 @@ const Header = ({ auth, startLogout }) => {
       >
         <Navbar.Brand>
           <Nav.Link to="/">
-            <img src="/images/shrug-ir.png" />
+            <img alt="logo" src="/images/shrug-ir.png" />
           </Nav.Link>
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
@@ -52,7 +57,8 @@ const Header = ({ auth, startLogout }) => {
                     variant="outline-secondary"
                     size="sm"
                   >
-                    <FontAwesomeIcon icon={faSignOutAlt} /> Logout
+                    <FontAwesomeIcon icon={faSignOutAlt} />
+                    Logout
                   </Button>
                 )
               }
@@ -62,16 +68,19 @@ const Header = ({ auth, startLogout }) => {
       </Navbar>
     </Container>
   );
-}
-
-const mapSteteToProps = (state) => {
-  return {
-    auth: state.auth
-  };
 };
 
-const mapDispatchToProps = (dispatch) => ({
-  startLogout: () => dispatch(startLogout())
+const mapSteteToProps = (state) => ({
+  auth: state.auth,
 });
+
+const mapDispatchToProps = (dispatch) => ({
+  logout: () => dispatch(startLogout()),
+});
+
+Header.propTypes = {
+  auth: PropTypes.instanceOf(Object).isRequired,
+  logout: PropTypes.func.isRequired,
+};
 
 export default connect(mapSteteToProps, mapDispatchToProps)(Header);
