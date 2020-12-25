@@ -10,11 +10,11 @@ run-server:
 
 install-client:
 	cd client && \
-	yarn install
+	npm install
 
 run-client: 
 	cd client && \
-	yarn dev-server
+	npm run dev-server
 
 d-build:
 	docker build .
