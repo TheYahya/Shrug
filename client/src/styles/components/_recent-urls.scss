@@ -8,6 +8,8 @@
   }
   .btn-action, .btn-copy{
     color: $text-color;
+    margin: 0 .2rem;
+    padding: 0;
     &:hover {
       cursor: pointer;
     }
@@ -27,6 +29,13 @@
     }
     tbody {
       font-weight: lighter;
+      th, td {
+        padding: .3rem;
+        a {
+          padding: 0;
+          margin: 0;
+        }
+      }
     }
   }
 
