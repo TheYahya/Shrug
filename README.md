@@ -9,6 +9,8 @@ Shrug is a fast & open source link shortner writen with Golang and React.JS. For
 
 Copy `.env.example` to `.env` fill dbs credentials
 
+And fill `GOOGLE_CLIENT_ID` from [console.developers.google.com/apis/credentials](https://console.developers.google.com/apis/credentials)
+
 Also you need download `IP2LOCATION-LITE-DB11.BIN` and copy it in `server/files/` directory; The database will be updated in monthly basis for the greater accuracy. Free LITE databases are available at https://lite.ip2location.com/ upon registration
 
 ### Develpment
