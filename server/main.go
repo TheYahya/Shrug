@@ -3,19 +3,20 @@ package main
 import (
 	"errors"
 	"fmt"
+	"net/http"
+	"os"
+	"time"
+
 	"github.com/TheYahya/shrug/infrastructure/persistence/location"
 	"github.com/TheYahya/shrug/infrastructure/persistence/logger"
-	"github.com/TheYahya/shrug/infrastructure/persistence/postgres"
-	"github.com/TheYahya/shrug/infrastructure/persistence/queue"
+	postgresrepo "github.com/TheYahya/shrug/infrastructure/persistence/postgres"
+	redisqueue "github.com/TheYahya/shrug/infrastructure/persistence/queue"
 	"github.com/TheYahya/shrug/interfaces"
 	"github.com/TheYahya/shrug/interfaces/response"
 	"github.com/TheYahya/shrug/router"
 	"github.com/TheYahya/shrug/usecase"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/cors"
-	"net/http"
-	"os"
-	"time"
 )
 
 var (
@@ -45,6 +46,7 @@ func main() {
 	redisPort, _ := getEnv("REDIS_PORT")
 
 	repositories = postgresrepo.NewPostgresRepository(dbHost, dbPort, dbName, dbUser, dbPassword)
+	defer repositories.Close()
 	redisQueue := redisqueue.NewRedisQueue(redistHost, redisPort, errChan)
 	location := location.NewLocation(ip2locationDbPath)
 	defer location.Close()

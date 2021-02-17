@@ -2,10 +2,11 @@ package postgresrepo
 
 import (
 	"fmt"
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
+
 	"github.com/TheYahya/shrug/domain/entity"
 	"github.com/TheYahya/shrug/domain/repository"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
 type PostgresRepositories struct {
@@ -46,9 +47,13 @@ func NewPostgresRepository(dbhost string, dbport string, dbname string, dbuser s
 	}
 }
 
+// Close the db connection
 func (r *PostgresRepositories) Close() error {
-	// return r.db.Close()
-	return nil
+	db, err := r.db.DB()
+	if err != nil {
+		return err
+	}
+	return db.Close()
 }
 
 func (r *PostgresRepositories) Automigrate() error {
