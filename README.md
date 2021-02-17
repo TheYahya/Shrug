@@ -36,6 +36,13 @@ Then you're development version will be up and runing on `localhost:8080`.
 ### Docker
 By `docker-compose up -d` the project will be up on port `80` which you can change it on `docker-compose.yml`.
 
+### Screenshots
+![Shrug login page](https://github.com/TheYahya/shrug/blob/master/screenshots/1.png)
+
+![Shrug dashboard page](https://github.com/TheYahya/shrug/blob/master/screenshots/2.png)
+
+![Shrug stats page](https://github.com/TheYahya/shrug/blob/master/screenshots/3.png)
+
 ## Contributing
 You can fork the repository, improve or fix some part of it and then send a pull requests. Or simply open and issue if there's a bug or you have a feature in mind.
 
