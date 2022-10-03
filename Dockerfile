@@ -1,4 +1,4 @@
-FROM golang:1.15-alpine as server
+FROM golang:1.19-alpine as server
 WORKDIR /app
 COPY ./server . 
 RUN go mod vendor
