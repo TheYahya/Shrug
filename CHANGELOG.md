@@ -1,3 +1,9 @@
+## v0.1.2 (2022-10-09)
+
+### Refactor
+
+- **server**: refactor directory/DI structures
+
 ## v0.1.1 (2022-10-09)
 
 ### Refactor
