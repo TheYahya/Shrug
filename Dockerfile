@@ -4,7 +4,7 @@ COPY ./server .
 RUN go mod vendor
 RUN go build -mod=vendor -ldflags "-w" -o shrug .
 
-FROM node:14.5.0 as client
+FROM node:16.17 as client
 RUN mkdir -p /client
 WORKDIR /client
 COPY ./client ./
