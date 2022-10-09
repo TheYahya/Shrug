@@ -1,3 +1,9 @@
+## v0.1.1 (2022-10-09)
+
+### Refactor
+
+- **redit**: remove redis
+
 ## v0.1.0 (2022-10-09)
 
 ### Feat
