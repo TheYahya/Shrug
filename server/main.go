@@ -6,31 +6,29 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/TheYahya/shrug/infrastructure/persistence/location"
-	"github.com/TheYahya/shrug/infrastructure/persistence/logger"
-	postgresrepo "github.com/TheYahya/shrug/infrastructure/persistence/postgres"
-	"github.com/TheYahya/shrug/interfaces"
-	"github.com/TheYahya/shrug/interfaces/response"
+	infraHttp "github.com/TheYahya/shrug/infra/http"
+	"github.com/TheYahya/shrug/infra/http/response"
+	"github.com/TheYahya/shrug/infra/persistence/location"
+	postgresrepo "github.com/TheYahya/shrug/infra/persistence/postgres"
 	"github.com/TheYahya/shrug/router"
 	"github.com/TheYahya/shrug/usecase"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/cors"
+	"go.uber.org/zap"
 )
 
 var (
-	log           *logger.Repo
-	repositories  *postgresrepo.PostgresRepositories
-	linkUsecase   usecase.LinkUsecase
-	userUsecase   usecase.UserUsecase
-	visitUsecase  usecase.VisitUsecase
-	urlInterface  interfaces.LinkInterface
-	userInterface interfaces.UserInterface
-	httpRouter    router.Router
+	repositories *postgresrepo.PostgresRepositories
+	linkUsecase  usecase.LinkUsecase
+	userUsecase  usecase.UserUsecase
+	visitUsecase usecase.VisitUsecase
+	httpRouter   router.Router
 )
 
 func main() {
-	log = logger.NewLogger()
-	log.Info("Starting...")
+	logger, _ := zap.NewProduction()
+	defer logger.Sync()
+	logger.Info("starting...")
 
 	dbHost, _ := getEnv("DB_HOST")
 	dbPort, _ := getEnv("DB_PORT")
@@ -46,8 +44,19 @@ func main() {
 	linkUsecase = usecase.NewLinkUsecase(repositories.Link)
 	userUsecase = usecase.NewUserUsecase(repositories.User)
 	visitUsecase = usecase.NewVisitUsecase(repositories.Visit)
-	urlInterface = interfaces.NewLinkInterface(linkUsecase, visitUsecase, location)
-	userInterface = interfaces.NewUserInterface(userUsecase)
+
+	linkHttp := infraHttp.NewLink(infraHttp.LinkDI{
+		Uc:       linkUsecase,
+		VisitUc:  visitUsecase,
+		Location: location,
+		Log:      logger,
+	})
+
+	userHttp := infraHttp.NewUser(infraHttp.UserDI{
+		Uc:     userUsecase,
+		LinkUc: linkUsecase,
+		Log:    logger,
+	})
 	httpRouter = router.NewMuxRouter()
 
 	r := chi.NewRouter()
@@ -61,7 +70,7 @@ func main() {
 	})
 	r.Use(cors.Handler)
 
-	r.Get("/{code}", response.ErrorHandler(urlInterface.RedirectLink))
+	r.Get("/{code}", response.ErrorHandler(linkHttp.RedirectLink))
 
 	buildHandler := http.FileServer(http.Dir("/client/public"))
 	r.Handle("/", buildHandler)
@@ -74,21 +83,21 @@ func main() {
 
 	r.Route("/api/v1", func(r chi.Router) {
 		r.Use(router.JWTMiddleware)
-		r.Get("/urls/{code}", response.ErrorHandler(urlInterface.GetLink))
-		r.Post("/urls", response.ErrorHandler(urlInterface.AddLink))
-		r.Patch("/urls", response.ErrorHandler(urlInterface.UpdateLink))
-		r.Get("/urls", response.ErrorHandler(userInterface.GetLinks))
-		r.Delete("/urls/{id}", response.ErrorHandler(urlInterface.DeleteLink))
-		r.Get("/histogram/{id}", response.ErrorHandler(urlInterface.Histogram))
-		r.Get("/browsers-stats/{id}", response.ErrorHandler(urlInterface.BrowsersStats))
-		r.Get("/city-stats/{id}", response.ErrorHandler(urlInterface.CityStats))
-		r.Get("/referer-stats/{id}", response.ErrorHandler(urlInterface.RefererStats))
-		r.Get("/os-stats/{id}", response.ErrorHandler(urlInterface.OsStats))
-		r.Get("/overview-stats/{id}", response.ErrorHandler(urlInterface.OverviewStats))
-		r.Get("/users", response.ErrorHandler(userInterface.GetUser))
+		r.Get("/urls/{code}", response.ErrorHandler(linkHttp.GetLink))
+		r.Post("/urls", response.ErrorHandler(linkHttp.AddLink))
+		r.Patch("/urls", response.ErrorHandler(linkHttp.UpdateLink))
+		r.Get("/urls", response.ErrorHandler(userHttp.GetLinks))
+		r.Delete("/urls/{id}", response.ErrorHandler(linkHttp.DeleteLink))
+		r.Get("/histogram/{id}", response.ErrorHandler(linkHttp.Histogram))
+		r.Get("/browsers-stats/{id}", response.ErrorHandler(linkHttp.BrowsersStats))
+		r.Get("/city-stats/{id}", response.ErrorHandler(linkHttp.CityStats))
+		r.Get("/referer-stats/{id}", response.ErrorHandler(linkHttp.RefererStats))
+		r.Get("/os-stats/{id}", response.ErrorHandler(linkHttp.OsStats))
+		r.Get("/overview-stats/{id}", response.ErrorHandler(linkHttp.OverviewStats))
+		r.Get("/users", response.ErrorHandler(userHttp.GetUser))
 	})
 
-	r.Post("/api/v1/google/auth", response.ErrorHandler(userInterface.GoogleAuth))
+	r.Post("/api/v1/google/auth", response.ErrorHandler(userHttp.GoogleAuth))
 
 	port, err := getEnv("PORT")
 	if err != nil {

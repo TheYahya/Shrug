@@ -2,9 +2,10 @@ package usecase
 
 import (
 	"errors"
+
 	"github.com/TheYahya/shrug/domain/entity"
 	"github.com/TheYahya/shrug/domain/repository"
-	"github.com/theyahya/random-string"
+	randomstring "github.com/theyahya/random-string"
 )
 
 type LinkUsecase interface {

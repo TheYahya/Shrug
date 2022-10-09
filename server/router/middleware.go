@@ -3,11 +3,12 @@ package router
 import (
 	"context"
 	"fmt"
-	"github.com/dgrijalva/jwt-go"
 	"net/http"
 	"os"
-	httpResponse "github.com/TheYahya/shrug/interfaces/response"
 	"strings"
+
+	httpResponse "github.com/TheYahya/shrug/infra/http/response"
+	"github.com/dgrijalva/jwt-go"
 )
 
 // JWTMiddleware is to authorize the user
