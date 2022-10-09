@@ -1,4 +1,4 @@
-package interfaces
+package http
 
 import (
 	"encoding/json"
@@ -9,36 +9,48 @@ import (
 	"time"
 
 	"github.com/TheYahya/shrug/domain/entity"
-	httpResponse "github.com/TheYahya/shrug/interfaces/response"
+	httpResponse "github.com/TheYahya/shrug/infra/http/response"
 	"github.com/TheYahya/shrug/usecase"
 	"github.com/dgrijalva/jwt-go"
+	"go.uber.org/zap"
 	"google.golang.org/api/oauth2/v2"
 )
 
-type userInterfaces struct{}
-
-var (
-	userUsecase usecase.UserUsecase
-)
-
-// UserInterface decleration
-type UserInterface interface {
+// Userdecleration
+type User interface {
 	GetLinks(response http.ResponseWriter, request *http.Request) error
 	GoogleAuth(response http.ResponseWriter, request *http.Request) error
 	GetUser(response http.ResponseWriter, request *http.Request) error
 }
 
-// NewUserInterface returns a urlInterface
-func NewUserInterface(usecase usecase.UserUsecase) UserInterface {
-	userUsecase = usecase
-	return &userInterfaces{}
+type (
+	UserDI struct {
+		Uc     usecase.UserUsecase
+		LinkUc usecase.LinkUsecase
+		Log    *zap.Logger
+	}
+
+	user struct {
+		uc     usecase.UserUsecase
+		linkUc usecase.LinkUsecase
+		log    *zap.Logger
+	}
+)
+
+// NewUser returns a user
+func NewUser(di UserDI) User {
+	return &user{
+		uc:     di.Uc,
+		linkUc: di.LinkUc,
+		log:    di.Log,
+	}
 }
 
-func (*userInterfaces) GetLinks(response http.ResponseWriter, request *http.Request) error {
+func (u *user) GetLinks(response http.ResponseWriter, request *http.Request) error {
 	response.Header().Set("Content-Type", "application/json")
 
 	userID := request.Context().Value("userId").(int64)
-	user, err := userUsecase.UserFindByID(userID)
+	user, err := u.uc.UserFindByID(userID)
 	if err != nil {
 		return errors.New("Error unmarshalling data")
 	}
@@ -54,7 +66,7 @@ func (*userInterfaces) GetLinks(response http.ResponseWriter, request *http.Requ
 		limit = 10
 	}
 
-	total64, err := lnkUsecase.LinksCount(user, search)
+	total64, err := u.linkUc.LinksCount(user, search)
 	if err != nil {
 		return err
 	}
@@ -65,7 +77,7 @@ func (*userInterfaces) GetLinks(response http.ResponseWriter, request *http.Requ
 		offset -= limit
 	}
 
-	urls, err := lnkUsecase.Links(user, offset, limit, search)
+	urls, err := u.linkUc.Links(user, offset, limit, search)
 	if err != nil {
 		return err
 	}
@@ -92,7 +104,7 @@ type claims struct {
 
 var jwtKey = []byte(os.Getenv("JWT_SECRET_KEY"))
 
-func (*userInterfaces) GoogleAuth(response http.ResponseWriter, request *http.Request) error {
+func (u *user) GoogleAuth(response http.ResponseWriter, request *http.Request) error {
 	response.Header().Set("Content-Type", "application/json")
 
 	var at accessToken
@@ -112,11 +124,11 @@ func (*userInterfaces) GoogleAuth(response http.ResponseWriter, request *http.Re
 	}
 
 	userEmail := tokenInfo.Email
-	user, err := userUsecase.UserFindByEmail(userEmail)
+	user, err := u.uc.UserFindByEmail(userEmail)
 	if err != nil {
 		var newUser entity.User
 		newUser.Email = tokenInfo.Email
-		user, _ = userUsecase.UserStore(&newUser)
+		user, _ = u.uc.UserStore(&newUser)
 		user = &newUser
 	}
 
@@ -147,11 +159,11 @@ func (*userInterfaces) GoogleAuth(response http.ResponseWriter, request *http.Re
 	return json.NewEncoder(response).Encode(res)
 }
 
-func (*userInterfaces) GetUser(response http.ResponseWriter, request *http.Request) error {
+func (u *user) GetUser(response http.ResponseWriter, request *http.Request) error {
 	response.Header().Set("Content-Type", "application/json")
 
 	userID := request.Context().Value("userId").(int64)
-	user, err := userUsecase.UserFindByID(userID)
+	user, err := u.uc.UserFindByID(userID)
 	if err != nil {
 		return errors.New("Error unmarshalling data")
 	}

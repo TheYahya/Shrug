@@ -1,9 +1,8 @@
-package interfaces
+package http
 
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"net"
 	"net/http"
 	"net/url"
@@ -12,23 +11,16 @@ import (
 	"time"
 
 	"github.com/TheYahya/shrug/domain/entity"
-	"github.com/TheYahya/shrug/infrastructure/persistence/location"
-	httpResponse "github.com/TheYahya/shrug/interfaces/response"
+	httpResponse "github.com/TheYahya/shrug/infra/http/response"
+	"github.com/TheYahya/shrug/infra/persistence/location"
 	"github.com/TheYahya/shrug/usecase"
 	"github.com/go-chi/chi"
 	"github.com/mssola/user_agent"
+	"go.uber.org/zap"
 )
 
-type interfaces struct{}
-
-var (
-	lnkUsecase usecase.LinkUsecase
-	vstUsecase usecase.VisitUsecase
-	lction     *location.LocationRepo
-)
-
-// LinkInterface decleration
-type LinkInterface interface {
+// Linkdecleration
+type Link interface {
 	AddLink(response http.ResponseWriter, request *http.Request) error
 	UpdateLink(response http.ResponseWriter, request *http.Request) error
 	GetLink(response http.ResponseWriter, request *http.Request) error
@@ -42,12 +34,30 @@ type LinkInterface interface {
 	RefererStats(response http.ResponseWriter, request *http.Request) error
 }
 
+type (
+	LinkDI struct {
+		Uc       usecase.LinkUsecase
+		VisitUc  usecase.VisitUsecase
+		Location *location.LocationRepo
+		Log      *zap.Logger
+	}
+
+	link struct {
+		uc       usecase.LinkUsecase
+		visitUc  usecase.VisitUsecase
+		location *location.LocationRepo
+		log      *zap.Logger
+	}
+)
+
 // NewLinkInterface returns a urlInterface
-func NewLinkInterface(linkUsecase usecase.LinkUsecase, visitUsecase usecase.VisitUsecase, location *location.LocationRepo) LinkInterface {
-	lnkUsecase = linkUsecase
-	vstUsecase = visitUsecase
-	lction = location
-	return &interfaces{}
+func NewLink(di LinkDI) Link {
+	return &link{
+		uc:       di.Uc,
+		visitUc:  di.VisitUc,
+		location: di.Location,
+		log:      di.Log,
+	}
 }
 
 func getIP(r *http.Request) (string, error) {
@@ -85,8 +95,8 @@ func isURL(str string) bool {
 	return err == nil && u.Scheme != "" && u.Host != ""
 }
 
-func hasPermission(userID int64, linkID int64) bool {
-	link, err := lnkUsecase.FindByID(linkID)
+func (l *link) hasPermission(userID int64, linkID int64) bool {
+	link, err := l.uc.FindByID(linkID)
 	if err != nil {
 		return false
 	}
@@ -98,7 +108,7 @@ func hasPermission(userID int64, linkID int64) bool {
 	return true
 }
 
-func (*interfaces) AddLink(response http.ResponseWriter, request *http.Request) error {
+func (l *link) AddLink(response http.ResponseWriter, request *http.Request) error {
 	response.Header().Set("Content-Type", "application/json")
 	var link entity.Link
 
@@ -117,7 +127,7 @@ func (*interfaces) AddLink(response http.ResponseWriter, request *http.Request) 
 	}
 
 	if link.ShortCode != "" {
-		result, err := lnkUsecase.StoreWithCode(&link)
+		result, err := l.uc.StoreWithCode(&link)
 		if err != nil {
 			return errors.New(err.Error())
 		}
@@ -126,7 +136,7 @@ func (*interfaces) AddLink(response http.ResponseWriter, request *http.Request) 
 		return nil
 	}
 
-	result, err := lnkUsecase.Store(&link)
+	result, err := l.uc.Store(&link)
 	if err != nil {
 		return errors.New("Faild to save the url")
 	}
@@ -135,7 +145,7 @@ func (*interfaces) AddLink(response http.ResponseWriter, request *http.Request) 
 	return res.Done(response, http.StatusOK)
 }
 
-func (*interfaces) UpdateLink(response http.ResponseWriter, request *http.Request) error {
+func (l *link) UpdateLink(response http.ResponseWriter, request *http.Request) error {
 	response.Header().Set("Content-Type", "application/json")
 	var link entity.Link
 	err := json.NewDecoder(request.Body).Decode(&link)
@@ -143,7 +153,7 @@ func (*interfaces) UpdateLink(response http.ResponseWriter, request *http.Reques
 		return errors.New("Error unmarshalling data")
 	}
 
-	result, err := lnkUsecase.FindByID(link.ID)
+	result, err := l.uc.FindByID(link.ID)
 	if err != nil {
 		return err
 	}
@@ -164,7 +174,7 @@ func (*interfaces) UpdateLink(response http.ResponseWriter, request *http.Reques
 	result.ShortCode = link.ShortCode
 	result.Link = link.Link
 	result.UpdatedAt = time.Now()
-	updatedLink, err := lnkUsecase.Update(result)
+	updatedLink, err := l.uc.Update(result)
 	if err != nil {
 		return err
 	}
@@ -173,9 +183,9 @@ func (*interfaces) UpdateLink(response http.ResponseWriter, request *http.Reques
 	return res.Done(response, http.StatusOK)
 }
 
-func (*interfaces) GetLink(response http.ResponseWriter, request *http.Request) error {
+func (l *link) GetLink(response http.ResponseWriter, request *http.Request) error {
 	code := chi.URLParam(request, "code")
-	result, err := lnkUsecase.FindByShortCode(code)
+	result, err := l.uc.FindByShortCode(code)
 	if err != nil {
 		return err
 	}
@@ -184,14 +194,14 @@ func (*interfaces) GetLink(response http.ResponseWriter, request *http.Request) 
 
 }
 
-func (*interfaces) DeleteLink(response http.ResponseWriter, request *http.Request) error {
+func (l *link) DeleteLink(response http.ResponseWriter, request *http.Request) error {
 	stringID := chi.URLParam(request, "id")
 	id, err := strconv.ParseInt(stringID, 10, 64)
 	if err != nil {
 		return errors.New("Id isn't right")
 	}
 
-	result, err := lnkUsecase.FindByID(id)
+	result, err := l.uc.FindByID(id)
 	if err != nil {
 		return err
 	}
@@ -201,7 +211,7 @@ func (*interfaces) DeleteLink(response http.ResponseWriter, request *http.Reques
 		return errors.New("Unauthorized")
 	}
 
-	err2 := lnkUsecase.Delete(result.ID)
+	err2 := l.uc.Delete(result.ID)
 	if err2 != nil {
 		return err2
 	}
@@ -211,9 +221,9 @@ func (*interfaces) DeleteLink(response http.ResponseWriter, request *http.Reques
 
 }
 
-func (*interfaces) RedirectLink(response http.ResponseWriter, request *http.Request) error {
+func (l *link) RedirectLink(response http.ResponseWriter, request *http.Request) error {
 	code := chi.URLParam(request, "code")
-	link, err := lnkUsecase.FindByShortCode(code)
+	link, err := l.uc.FindByShortCode(code)
 	if err != nil {
 		return err
 	}
@@ -227,7 +237,7 @@ func (*interfaces) RedirectLink(response http.ResponseWriter, request *http.Requ
 	if err != nil {
 		noErrorFindingLocation = true
 	}
-	results, err := lction.DB.Get_all(ip)
+	results, err := l.location.DB.Get_all(ip)
 	if err != nil {
 		noErrorFindingLocation = true
 	}
@@ -278,7 +288,7 @@ func (*interfaces) RedirectLink(response http.ResponseWriter, request *http.Requ
 		OSWindows int64
 		OSOther   int64
 	)
-	fmt.Println(vq.Browser)
+
 	switch vq.Browser {
 	case "chrome":
 		brChrome = 1
@@ -305,7 +315,6 @@ func (*interfaces) RedirectLink(response http.ResponseWriter, request *http.Requ
 		brOther = 1
 	}
 
-	fmt.Println(vq.OS)
 	if strings.Contains(vq.OS, "android") {
 		OSAndroid = 1
 	} else if strings.Contains(vq.OS, "ios") {
@@ -320,11 +329,7 @@ func (*interfaces) RedirectLink(response http.ResponseWriter, request *http.Requ
 		OSOther = 1
 	}
 
-	visit, err := vstUsecase.VisitFindByLinkIDInOneHour(vq.LinkID)
-	fmt.Println("err")
-	fmt.Println(err)
-	fmt.Println(vq.Country)
-	fmt.Println(vq)
+	visit, err := l.visitUc.VisitFindByLinkIDInOneHour(vq.LinkID)
 	if vq.Country == "" {
 		vq.Country = "Unknown"
 	}
@@ -336,7 +341,6 @@ func (*interfaces) RedirectLink(response http.ResponseWriter, request *http.Requ
 	}
 	if err != nil {
 		// Insert a new one
-		fmt.Println("new one")
 		visit = &entity.Visit{}
 
 		visit.LinkID = vq.LinkID
@@ -365,11 +369,9 @@ func (*interfaces) RedirectLink(response http.ResponseWriter, request *http.Requ
 		visit.CreatedAt = time.Now()
 		visit.UpdatedAt = time.Now()
 
-		vstUsecase.VisitStore(visit)
+		l.visitUc.VisitStore(visit)
 	} else {
 		// Update the one
-		fmt.Println("update one")
-		fmt.Println(visit)
 
 		visit.BrChrome = visit.BrChrome + brChrome
 		visit.BrFirefox = visit.BrFirefox + brFirefox
@@ -412,35 +414,27 @@ func (*interfaces) RedirectLink(response http.ResponseWriter, request *http.Requ
 		}
 		visit.Referer = referer
 
-		fmt.Println(visit.Country)
-
 		visit.UpdatedAt = time.Now()
-
-		vstUsecase.VisitUpdate(visit)
+		l.visitUc.VisitUpdate(visit)
 	}
 
-	// visit := &entity.Visit{
-	// 	LinkID: vq.LinkID,
-	// 	// BrChrome: vq.Browser,
-	// }
-	fmt.Println(visit)
-	newLink, _ := lnkUsecase.FindByID(vq.LinkID)
-	lnkUsecase.Visit(newLink, 1)
+	newLink, _ := l.uc.FindByID(vq.LinkID)
+	l.uc.Visit(newLink, 1)
 
 	http.Redirect(response, request, link.Link, http.StatusSeeOther)
 	return nil
 }
 
-func (*interfaces) Histogram(response http.ResponseWriter, request *http.Request) error {
+func (l *link) Histogram(response http.ResponseWriter, request *http.Request) error {
 	stringID := chi.URLParam(request, "id")
 	id, err := strconv.ParseInt(stringID, 10, 64)
 	if err != nil {
 		return err
 	}
-	if hasPermission(request.Context().Value("userId").(int64), id) != true {
+	if l.hasPermission(request.Context().Value("userId").(int64), id) != true {
 		return errors.New("Unauthorized")
 	}
-	result, err := vstUsecase.VisitHistogramByDay(id, 30)
+	result, err := l.visitUc.VisitHistogramByDay(id, 30)
 	if err != nil {
 		return err
 	}
@@ -450,16 +444,16 @@ func (*interfaces) Histogram(response http.ResponseWriter, request *http.Request
 
 }
 
-func (*interfaces) BrowsersStats(response http.ResponseWriter, request *http.Request) error {
+func (l *link) BrowsersStats(response http.ResponseWriter, request *http.Request) error {
 	stringID := chi.URLParam(request, "id")
 	id, err := strconv.ParseInt(stringID, 10, 64)
 	if err != nil {
 		return err
 	}
-	if hasPermission(request.Context().Value("userId").(int64), id) != true {
+	if l.hasPermission(request.Context().Value("userId").(int64), id) != true {
 		return errors.New("Unauthorized")
 	}
-	result, err := vstUsecase.VisitStatsBrowsers(id)
+	result, err := l.visitUc.VisitStatsBrowsers(id)
 	if err != nil {
 		return err
 	}
@@ -470,18 +464,18 @@ func (*interfaces) BrowsersStats(response http.ResponseWriter, request *http.Req
 	return json.NewEncoder(response).Encode(res)
 }
 
-func (*interfaces) CityStats(response http.ResponseWriter, request *http.Request) error {
+func (l *link) CityStats(response http.ResponseWriter, request *http.Request) error {
 	stringID := chi.URLParam(request, "id")
 	id, err := strconv.ParseInt(stringID, 10, 64)
 	if err != nil {
 		return err
 	}
 
-	if hasPermission(request.Context().Value("userId").(int64), id) != true {
+	if l.hasPermission(request.Context().Value("userId").(int64), id) != true {
 		return errors.New("Unauthorized")
 	}
 
-	result, err := vstUsecase.VisitStatsCity(id)
+	result, err := l.visitUc.VisitStatsCity(id)
 	if err != nil {
 		return err
 	}
@@ -492,18 +486,18 @@ func (*interfaces) CityStats(response http.ResponseWriter, request *http.Request
 	return json.NewEncoder(response).Encode(res)
 }
 
-func (*interfaces) RefererStats(response http.ResponseWriter, request *http.Request) error {
+func (l *link) RefererStats(response http.ResponseWriter, request *http.Request) error {
 	stringID := chi.URLParam(request, "id")
 	id, err := strconv.ParseInt(stringID, 10, 64)
 	if err != nil {
 		return err
 	}
 
-	if hasPermission(request.Context().Value("userId").(int64), id) != true {
+	if l.hasPermission(request.Context().Value("userId").(int64), id) != true {
 		return errors.New("Unauthorized")
 	}
 
-	result, err := vstUsecase.VisitStatsReferer(id)
+	result, err := l.visitUc.VisitStatsReferer(id)
 	if err != nil {
 		return err
 	}
@@ -514,16 +508,16 @@ func (*interfaces) RefererStats(response http.ResponseWriter, request *http.Requ
 	return json.NewEncoder(response).Encode(res)
 }
 
-func (*interfaces) OsStats(response http.ResponseWriter, request *http.Request) error {
+func (l *link) OsStats(response http.ResponseWriter, request *http.Request) error {
 	stringID := chi.URLParam(request, "id")
 	id, err := strconv.ParseInt(stringID, 10, 64)
 	if err != nil {
 		return err
 	}
-	if hasPermission(request.Context().Value("userId").(int64), id) != true {
+	if l.hasPermission(request.Context().Value("userId").(int64), id) != true {
 		return errors.New("Unauthorized")
 	}
-	result, err := vstUsecase.VisitStatsOS(id)
+	result, err := l.visitUc.VisitStatsOS(id)
 	if err != nil {
 		return err
 	}
@@ -535,36 +529,38 @@ func (*interfaces) OsStats(response http.ResponseWriter, request *http.Request) 
 
 }
 
-func (*interfaces) OverviewStats(response http.ResponseWriter, request *http.Request) error {
+func (l *link) OverviewStats(response http.ResponseWriter, request *http.Request) error {
 	stringID := chi.URLParam(request, "id")
 	id, err := strconv.ParseInt(stringID, 10, 64)
 	if err != nil {
 		return err
 	}
-	if hasPermission(request.Context().Value("userId").(int64), id) != true {
+
+	if l.hasPermission(request.Context().Value("userId").(int64), id) != true {
 		return errors.New("Unauthorized")
 	}
-	link, err := lnkUsecase.FindByID(id)
+
+	link, err := l.uc.FindByID(id)
 	if err != nil {
 		return err
 	}
 
-	os, err := vstUsecase.VisitStatsOS(id)
+	os, err := l.visitUc.VisitStatsOS(id)
 	if err != nil {
 		return err
 	}
 
-	br, err := vstUsecase.VisitStatsBrowsers(id)
+	br, err := l.visitUc.VisitStatsBrowsers(id)
 	if err != nil {
 		return err
 	}
 
-	views, err := vstUsecase.VisitHistogramByDay(id, 2)
+	views, err := l.visitUc.VisitHistogramByDay(id, 2)
 	if err != nil {
 		return err
 	}
 
-	visitsByCity, err := vstUsecase.VisitStatsCity(id)
+	visitsByCity, err := l.visitUc.VisitStatsCity(id)
 	if err != nil {
 		return err
 	}
