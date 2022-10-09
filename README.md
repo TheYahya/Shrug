@@ -1,9 +1,9 @@
-# Shrug
+# Shrug.site
 <p align="center">
-<a href="http://shrug.ir"><img src="./screenshots/logo.png" alt="shrug.ir"/></a>
+<a href="https://shrug.site"><img src="./screenshots/logo.png" alt="shrug.site"/></a>
 </p>
 
-Shrug is a fast & open source link shortner writen with Golang and React.JS. For demo check [shrug.ir](http://shrug.ir)
+Shrug is a fast & open source link shortner writen with Golang and React.JS. For demo check [shrug.site](https://shrug.site)
 
 ## Installation
 
@@ -13,28 +13,8 @@ And fill `GOOGLE_CLIENT_ID` from [console.developers.google.com/apis/credentials
 
 Also you need download `IP2LOCATION-LITE-DB11.BIN` and copy it in `server/files/` directory; The database will be updated in monthly basis for the greater accuracy. Free LITE databases are available at https://lite.ip2location.com/ upon registration
 
-### Develpment
-
-```bash
-# First create & up postgres and redis
-# If you have docker/docker-compose installed on your machine
-# You can run them simply by 
-# Which will expose postgres port on: 1581 and redis port on: 6379
-make dc-dbs-dev
-
-# Runing server, By default on port 8000
-make run-server
-
-# Install client dependencies
-make install-client
-
-# Runing client, By default on port 8080
-make run-client
-```
-Then you're development version will be up and runing on `localhost:8080`.
-
 ### Docker
-By `docker-compose up -d` the project will be up on port `80` which you can change it on `docker-compose.yml`.
+By `docker-compose up -d` the project will be up on port `8000` which you can change it on `docker-compose.yml`.
 
 ### Screenshots
 ![Shrug login page](https://github.com/TheYahya/shrug/blob/master/screenshots/1.png)
