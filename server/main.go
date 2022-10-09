@@ -5,12 +5,10 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	"time"
 
 	"github.com/TheYahya/shrug/infrastructure/persistence/location"
 	"github.com/TheYahya/shrug/infrastructure/persistence/logger"
 	postgresrepo "github.com/TheYahya/shrug/infrastructure/persistence/postgres"
-	redisqueue "github.com/TheYahya/shrug/infrastructure/persistence/queue"
 	"github.com/TheYahya/shrug/interfaces"
 	"github.com/TheYahya/shrug/interfaces/response"
 	"github.com/TheYahya/shrug/router"
@@ -41,19 +39,14 @@ func main() {
 	dbPassword, _ := getEnv("DB_PASSWORD")
 	ip2locationDbPath, _ := getEnv("IP2LOCATION_DB_PATH")
 
-	errChan := make(chan<- error)
-	redistHost, _ := getEnv("REDIS_HOST")
-	redisPort, _ := getEnv("REDIS_PORT")
-
 	repositories = postgresrepo.NewPostgresRepository(dbHost, dbPort, dbName, dbUser, dbPassword)
 	defer repositories.Close()
-	redisQueue := redisqueue.NewRedisQueue(redistHost, redisPort, errChan)
 	location := location.NewLocation(ip2locationDbPath)
 	defer location.Close()
 	linkUsecase = usecase.NewLinkUsecase(repositories.Link)
 	userUsecase = usecase.NewUserUsecase(repositories.User)
 	visitUsecase = usecase.NewVisitUsecase(repositories.Visit)
-	urlInterface = interfaces.NewLinkInterface(linkUsecase, visitUsecase, redisQueue, location)
+	urlInterface = interfaces.NewLinkInterface(linkUsecase, visitUsecase, location)
 	userInterface = interfaces.NewUserInterface(userUsecase)
 	httpRouter = router.NewMuxRouter()
 
@@ -96,16 +89,6 @@ func main() {
 	})
 
 	r.Post("/api/v1/google/auth", response.ErrorHandler(userInterface.GoogleAuth))
-
-	taskQueue := redisQueue.ViewsQueue
-
-	StartConsumingErr := taskQueue.StartConsuming(100, time.Second)
-	if StartConsumingErr != nil {
-		panic(StartConsumingErr)
-	}
-
-	viewsConsumer := redisQueue.NewRedisConsumer(linkUsecase, visitUsecase)
-	taskQueue.AddConsumer("views", viewsConsumer)
 
 	port, err := getEnv("PORT")
 	if err != nil {

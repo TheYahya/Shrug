@@ -28,32 +28,9 @@ services:
     networks:
       - shurg-net
 
-  redis-overcommit:
-    build: https://github.com/bkuhl/redis-overcommit-on-host.git
-    restart: 'no'
-    privileged: true
-    volumes:
-      - /proc/sys/vm:/mnt/vm
-      
-  shrug_redis:
-    build: ./redis
-    container_name: shrug_redis
-    hostname: redis
-    restart: always
-    privileged: true
-    volumes:
-      - shrug-redis:/usr/local/etc/redis
-      - ./redis/redis.conf:/usr/local/etc/redis/redis.conf:ro
-    networks:
-      - shurg-net
-
-
 volumes:
   shrug-postgres2:
     name: shrug-postgres-vol
-    driver: local 
-  shrug-redis:
-    name: shrug-redis-vol
     driver: local 
   
 networks:
