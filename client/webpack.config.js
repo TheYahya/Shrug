@@ -1,6 +1,6 @@
 const path = require('path');
 const webpack = require('webpack');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
@@ -17,14 +17,15 @@ if (process.env.NODE_ENV === 'test') {
   require('dotenv').config({ path: '.env.development' });
 }
 
+
 module.exports = (env, argv) => {
   const isProduction = env === 'production';
-  const CSSExtract = new ExtractTextPlugin('styles.css');
   const isDevMode = argv.mode === 'development';
   return {
     entry: './src/App.jsx',
     output: {
       path: path.join(__dirname, 'public', 'dist'),
+      publicPath: '/dist',
       filename: 'bundle.js'
     },
     resolve: {
@@ -41,25 +42,15 @@ module.exports = (env, argv) => {
         loader: 'babel-loader',
         test: /\.(ts|tsx|js|jsx)(\?\S*)?$/,
         exclude: /node_modules/
-      }, {
-        test: /\.s?css$/,
-        use: CSSExtract.extract({
-          use: [
-            {
-              loader: 'css-loader',
-              options: {
-                sourceMap: false
-              }
-            },
-            {
-              loader: 'sass-loader',
-              options: {
-                sourceMap: false
-              }
-            }
-          ]
-        })
-      }]
+      },{
+        test: /\.(sa|sc|c)ss$/,
+        use: [
+          isDevMode ? "style-loader" : MiniCssExtractPlugin.loader,
+          "css-loader",
+          "postcss-loader",
+          "sass-loader",
+        ]}, 
+      ]
     },
 
     // optimization: {
@@ -80,12 +71,10 @@ module.exports = (env, argv) => {
     // },
 
     plugins: [
-      CSSExtract,
+      new MiniCssExtractPlugin({
+        filename: "styles.css",
+      }),
       new CleanWebpackPlugin(),
-      // new HtmlWebpackPlugin({
-      //   template: path.join(__dirname, 'public', 'index.ejs'),
-      //   filename: path.join(__dirname, 'public', 'index.html'),
-      // }),
       new webpack.DefinePlugin({
         'process.env': {
           NODE_ENV: JSON.stringify(process.env.NODE_ENV),
@@ -97,9 +86,10 @@ module.exports = (env, argv) => {
     ],
     devtool: isProduction ? 'source-map' : 'inline-source-map',
     devServer: {
-      contentBase: path.join(__dirname, 'public'),
       historyApiFallback: true,
-      publicPath: '/dist/',
+      static: {
+        directory: path.join(__dirname, 'public'),
+      },
       hot: true,
       open: true
     }

@@ -9,7 +9,7 @@ export const add = (url = {}) => {
     'Authorization': 'Bearer ' + getCookie("jwtToken")
   }
   var data = url
-  return axios.post(`http://${BASE_URL}/api/v1/urls`, data, {
+  return axios.post(`${BASE_URL}/api/v1/urls`, data, {
     headers: headers
   })
   .then((response) => {
@@ -26,7 +26,7 @@ export const update = (url = {}) => {
     'Authorization': 'Bearer ' + getCookie("jwtToken")
   }
   var data = url
-  return axios.patch(`http://${BASE_URL}/api/v1/urls`, data, {
+  return axios.patch(`${BASE_URL}/api/v1/urls`, data, {
     headers: headers
   })
   .then((response) => {
@@ -43,7 +43,7 @@ export const getUrls = (offset = 0, limit = 0, search = '') => {
     'Authorization': 'Bearer ' + getCookie("jwtToken")
   }
   
-  return axios.get(`http://${BASE_URL}/api/v1/urls?offset=${offset}&limit=${limit}&search=${search}`, {
+  return axios.get(`${BASE_URL}/api/v1/urls?offset=${offset}&limit=${limit}&search=${search}`, {
     headers: headers
   })
   .then((response) => {
@@ -59,7 +59,7 @@ export const deleteUrl = (id) => {
     'Authorization': 'Bearer ' + getCookie("jwtToken")
   }
   
-  return axios.delete(`http://${BASE_URL}/api/v1/urls/${id}`, {
+  return axios.delete(`${BASE_URL}/api/v1/urls/${id}`, {
     headers: headers
   })
   .then((response) => {
@@ -76,7 +76,7 @@ export const getDaysAPI = (id) => {
     'Authorization': 'Bearer ' + getCookie("jwtToken")
   }
   
-  return axios.get(`http://${BASE_URL}/api/v1/histogram/${id}`, {
+  return axios.get(`${BASE_URL}/api/v1/histogram/${id}`, {
     headers: headers
   })
   .then((response) => {
@@ -92,7 +92,7 @@ export const getBrowsersStatsAPI = (id) => {
     'Authorization': 'Bearer ' + getCookie("jwtToken")
   }
   
-  return axios.get(`http://${BASE_URL}/api/v1/browsers-stats/${id}`, {
+  return axios.get(`${BASE_URL}/api/v1/browsers-stats/${id}`, {
     headers: headers
   })
   .then((response) => {
@@ -108,7 +108,7 @@ export const getOSStatsAPI = (id) => {
     'Authorization': 'Bearer ' + getCookie("jwtToken")
   }
   
-  return axios.get(`http://${BASE_URL}/api/v1/os-stats/${id}`, {
+  return axios.get(`${BASE_URL}/api/v1/os-stats/${id}`, {
     headers: headers
   })
   .then((response) => {
@@ -124,7 +124,7 @@ export const getOverviewStatsAPI = (id) => {
     'Authorization': 'Bearer ' + getCookie("jwtToken")
   }
   
-  return axios.get(`http://${BASE_URL}/api/v1/overview-stats/${id}`, {
+  return axios.get(`${BASE_URL}/api/v1/overview-stats/${id}`, {
     headers: headers
   })
   .then((response) => {
@@ -140,7 +140,7 @@ export const getCityStatsAPI = (id) => {
     'Authorization': 'Bearer ' + getCookie("jwtToken")
   }
   
-  return axios.get(`http://${BASE_URL}/api/v1/city-stats/${id}`, {
+  return axios.get(`${BASE_URL}/api/v1/city-stats/${id}`, {
     headers: headers
   })
   .then((response) => {
@@ -156,7 +156,7 @@ export const getRefererStatsAPI = (id) => {
     'Authorization': 'Bearer ' + getCookie("jwtToken")
   }
   
-  return axios.get(`http://${BASE_URL}/api/v1/referer-stats/${id}`, {
+  return axios.get(`${BASE_URL}/api/v1/referer-stats/${id}`, {
     headers: headers
   })
   .then((response) => {

@@ -10,7 +10,7 @@ export const loginAPI = (accessToken) => {
   var data = {
     access_token: accessToken
   }
-  return axios.post(`http://${BASE_URL}/api/v1/google/auth`, data, {
+  return axios.post(`${BASE_URL}/api/v1/google/auth`, data, {
     headers: headers
   })
   .then((response) => {
@@ -28,7 +28,7 @@ export const getUserAPI = (accessToken) => {
   var data = {
     access_token: accessToken
   }
-  return axios.get(`http://${BASE_URL}/api/v1/users`, {
+  return axios.get(`${BASE_URL}/api/v1/users`, {
     headers: headers
   })
   .then((response) => {
