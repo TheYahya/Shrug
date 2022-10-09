@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { Form } from 'react-bootstrap';
 import { startAddUrl } from '../actions/urls';
 import AuthButtons from './AuthButtons';
 
@@ -43,12 +42,12 @@ const NewUrl = ({ auth, urls, addUrl }) => {
   }
 
   return (
-    <Form
+    <form
       onSubmit={onSubmit}
       className="new-link px-3"
     >
-      <Form.Row>
-        <Form.Group className="col-12">
+      <div className="row">
+        <div className="col-12 form-group">
           <input
             type="text"
             id="url"
@@ -61,9 +60,9 @@ const NewUrl = ({ auth, urls, addUrl }) => {
             // eslint-disable-next-line jsx-a11y/no-autofocus
             autoFocus
           />
-        </Form.Group>
-        <Form.Group className="col-12">
-          <Form.Label htmlFor="more-options">
+        </div>
+        <div className="col-12 form-group">
+          <label htmlFor="more-options">
             <input
               type="checkbox"
               id="more-options"
@@ -71,17 +70,17 @@ const NewUrl = ({ auth, urls, addUrl }) => {
               onChange={onChangeOptions}
             />
             &nbsp;Custom url
-          </Form.Label>
-        </Form.Group>
-        <Form.Group
-          className={`col-6 more-options ${!showOptions && 'd-none'}`}
+          </label>
+        </div>
+        <div
+          className={`form-group col-6 more-options ${!showOptions && 'd-none'}`}
         >
-          <Form.Label
+          <label
             htmlFor="custom-address"
             className="w-100"
           >
             {`${BASE_URL}/`}
-            <Form.Control
+            <input
               type="text"
               name="custom-address"
               id="custom-address"
@@ -91,20 +90,20 @@ const NewUrl = ({ auth, urls, addUrl }) => {
               value={address}
               onChange={onAddressChange}
             />
-          </Form.Label>
-        </Form.Group>
-      </Form.Row>
+          </label>
+        </div>
+      </div>
       <small>
         Press
         <code> Enter </code>
         to shorten the URL.
       </small>
       <p><code>{urls.addUrlError}</code></p>
-      <Form.Control
+      <input
         type="submit"
         className="d-none"
       />
-    </Form>
+    </form>
   );
 };
 
@@ -124,3 +123,4 @@ NewUrl.propTypes = {
 };
 
 export default connect(mapSteteToProps, mapDispatchToProps)(NewUrl);
+

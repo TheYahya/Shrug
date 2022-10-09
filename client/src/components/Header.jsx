@@ -44,8 +44,7 @@ const Header = ({ auth, logout }) => {
             <Navbar.Text>
               {isAuthenticated && (
                 <Badge
-                  variant="light"
-                  className="mr-1"
+                  className="mr-1 bg-light"
                 >
                   {email}
                 </Badge>
