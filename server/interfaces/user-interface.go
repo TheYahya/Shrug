@@ -3,15 +3,16 @@ package interfaces
 import (
 	"encoding/json"
 	"errors"
-	"github.com/dgrijalva/jwt-go"
-	"google.golang.org/api/oauth2/v2"
 	"net/http"
 	"os"
+	"strconv"
+	"time"
+
 	"github.com/TheYahya/shrug/domain/entity"
 	httpResponse "github.com/TheYahya/shrug/interfaces/response"
 	"github.com/TheYahya/shrug/usecase"
-	"strconv"
-	"time"
+	"github.com/dgrijalva/jwt-go"
+	"google.golang.org/api/oauth2/v2"
 )
 
 type userInterfaces struct{}

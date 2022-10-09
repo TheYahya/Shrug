@@ -55,7 +55,7 @@ const UrlItem = ({
 
   const onCopied = (evt) => {
     evt.preventDefault();
-    copy(`http://${API_BASE_URL}/${url.shortCode}`);
+    copy(`${API_BASE_URL}/${url.shortCode}`);
     setCopied(true);
     setTimeout(() => { setCopied(false); }, 1000);
   };
@@ -74,7 +74,7 @@ const UrlItem = ({
     setOnEdit(false);
   };
 
-  const addLinkHandler = () => addLinkData(`http://${API_BASE_URL}/${url.shortCode}`);
+  const addLinkHandler = () => addLinkData(`${API_BASE_URL}/${url.shortCode}`);
 
   const onLinkChange = (evt) => setLink(evt.target.value);
 
@@ -129,7 +129,7 @@ const UrlItem = ({
                     icon={copied ? faCheck : faClone}
                   />
                 </Button>
-                <LinkButton href={`http://${API_BASE_URL}/${url.shortCode}`}>
+                <LinkButton href={`${API_BASE_URL}/${url.shortCode}`}>
                   <code>{`${API_BASE_URL}/${url.shortCode}`}</code>
                 </LinkButton>
               </>

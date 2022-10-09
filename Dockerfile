@@ -4,13 +4,13 @@ COPY ./server .
 RUN go mod vendor
 RUN go build -mod=vendor -ldflags "-w" -o shrug .
 
-FROM node:15.0.1 as client
+FROM node:14.5.0 as client
 RUN mkdir -p /client
 WORKDIR /client
 COPY ./client ./
 COPY ./.env ./..
-RUN yarn install
-RUN yarn build:prod
+RUN npm install
+RUN npm run build:prod
 
 FROM alpine
 RUN addgroup -S shrug && adduser -S shrug -G shrug

@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { GoogleAuthorize } from 'react-google-authorize';
+import { GoogleLogin } from 'react-google-login';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGoogle } from '@fortawesome/free-brands-svg-icons';
 import { startLogin } from '../actions/auth';
@@ -9,20 +9,17 @@ import { startLogin } from '../actions/auth';
 const { GOOGLE_CLIENT_ID } = process.env;
 
 const AuthButtons = ({ login }) => {
-  const responseGoogle = (response) => login(response.access_token);
+  const responseGoogle = (response) => {
+    login(response.accessToken);
+  }
 
   return (
-    <GoogleAuthorize
-      className="btn btn-outline-danger"
+    <GoogleLogin
       clientId={GOOGLE_CLIENT_ID}
-      buttonText={(
-        <span>
-          <FontAwesomeIcon icon={faGoogle} />
-          &nbsp;Login with Google
-        </span>
-      )}
+      buttonText="Login with Google"
       onSuccess={responseGoogle}
       onFailure={responseGoogle}
+      cookiePolicy={'single_host_origin'}
     />
   );
 };

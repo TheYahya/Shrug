@@ -6,6 +6,8 @@ services:
     hostname: shrug
     build: ./
     restart: always
+    ports:
+      - 8000:8000
     env_file:
       - .env
     volumes:
@@ -13,12 +15,12 @@ services:
     networks:
       - shurg-net
 
-  postgres:
-    container_name: postgres
+  shrug_postgres:
+    container_name: shrug_postgres
     image: postgres:12.1-alpine
     restart: always
     volumes:
-      - shrug-postgres:/var/lib/postgresql/data
+      - shrug-postgres2:/var/lib/postgresql/data
     environment:
       POSTGRES_DB: shrug
       POSTGRES_USER: admin
@@ -33,9 +35,9 @@ services:
     volumes:
       - /proc/sys/vm:/mnt/vm
       
-  redis:
+  shrug_redis:
     build: ./redis
-    container_name: redis
+    container_name: shrug_redis
     hostname: redis
     restart: always
     privileged: true
@@ -45,20 +47,9 @@ services:
     networks:
       - shurg-net
 
-  nginx:
-    image: nginx:1.18
-    container_name: nginx
-    hostname: nginx
-    restart: always
-    ports:
-      - 80:80
-    volumes:
-      - ./nginx/conf.d:/etc/nginx/conf.d
-    networks:
-      - shurg-net
 
 volumes:
-  shrug-postgres:
+  shrug-postgres2:
     name: shrug-postgres-vol
     driver: local 
   shrug-redis:
