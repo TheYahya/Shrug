@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -26,9 +27,9 @@ const Header = ({ auth, logout }) => {
         collapseOnSelect
       >
         <Navbar.Brand>
-          <Nav.Link to="/">
+          <Link to="/">
             <img alt="logo" src="/images/shrug-ir.png" />
-          </Nav.Link>
+          </Link>
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
