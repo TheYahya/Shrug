@@ -1,3 +1,9 @@
+## v0.1.3 (2022-10-11)
+
+### Fix
+
+- **client/stats**: fix stats page
+
 ## v0.1.2 (2022-10-09)
 
 ### Refactor
