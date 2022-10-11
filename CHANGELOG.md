@@ -1,3 +1,9 @@
+## v0.1.4 (2022-10-11)
+
+### Fix
+
+- client/package.json & client/package-lock.json to reduce vulnerabilities
+
 ## v0.1.3 (2022-10-11)
 
 ### Fix
