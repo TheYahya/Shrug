@@ -54,7 +54,7 @@
     "react": "^17.0.2",
     "react-addons-shallow-compare": "^15.6.3",
     "react-bootstrap": "^2.5.0",
-    "react-dates": "^12.3.0",
+    "react-dates": "^12.7.1",
     "react-dom": "^17.0.2",
     "react-google-login": "^5.2.2",
     "react-modal": "^3.15.1",
