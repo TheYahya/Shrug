@@ -12,7 +12,7 @@ COPY ./.env ./..
 RUN npm install
 RUN npm run build:prod
 
-FROM alpine
+FROM alpine:3.18.3
 RUN addgroup -S shrug && adduser -S shrug -G shrug
 USER shrug
 
