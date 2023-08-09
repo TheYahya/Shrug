@@ -60,7 +60,7 @@
     "react-modal": "^3.15.1",
     "react-redux": "^8.0.4",
     "react-router-dom": "^6.4.2",
-    "recharts": "^2.1.14",
+    "recharts": "^2.7.2",
     "redux": "^4.2.0",
     "redux-first-history": "^5.1.1",
     "redux-mock-store": "1.2.3",
